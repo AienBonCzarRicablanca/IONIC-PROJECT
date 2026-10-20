@@ -1,0 +1,7 @@
+{
+  "name": "Dental_Clinic_Management_System",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
