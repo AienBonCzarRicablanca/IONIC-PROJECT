@@ -1,0 +1,55 @@
+import {
+  analyticsOutline,
+  barChartOutline,
+  bodyOutline,
+  calendarOutline,
+  cardOutline,
+  calendarNumberOutline,
+  cubeOutline,
+  gridOutline,
+  imageOutline,
+  listOutline,
+  mailOutline,
+  medkitOutline,
+  peopleOutline,
+  receiptOutline,
+  shieldCheckmarkOutline,
+} from 'ionicons/icons'
+import type { NavItem, UserRole } from '../types'
+
+export const NAV_ITEMS: Record<UserRole, NavItem[]> = {
+  admin: [
+    { label: 'Dashboard', path: '/admin/dashboard', icon: gridOutline },
+    { label: 'Patients', path: '/admin/patients', icon: peopleOutline },
+    { label: 'Appointments', path: '/admin/appointments', icon: calendarOutline },
+    { label: 'Queue', path: '/admin/queue', icon: listOutline },
+    { label: 'Billing', path: '/admin/billing', icon: receiptOutline },
+    { label: 'Inventory', path: '/admin/inventory', icon: cubeOutline },
+    { label: 'Messages', path: '/admin/messages', icon: mailOutline },
+  ],
+  dentist: [
+    { label: 'Dashboard', path: '/dentist/dashboard', icon: gridOutline },
+    { label: 'My Calendar', path: '/dentist/calendar', icon: calendarNumberOutline },
+    { label: 'Patients', path: '/dentist/patients', icon: peopleOutline },
+    { label: 'X-Rays', path: '/dentist/x-rays', icon: imageOutline },
+  ],
+  patient: [
+    { label: 'Dashboard', path: '/patient/dashboard', icon: gridOutline },
+    { label: 'Appointments', path: '/patient/appointments', icon: calendarOutline },
+    { label: 'Treatments', path: '/patient/treatments', icon: medkitOutline },
+    { label: 'Dental Chart', path: '/patient/dental-chart', icon: bodyOutline },
+    { label: 'Payments', path: '/patient/payments', icon: cardOutline },
+  ],
+  superadmin: [
+    { label: 'Dashboard', path: '/superadmin/dashboard', icon: gridOutline },
+    { label: 'Patients', path: '/superadmin/patients', icon: peopleOutline },
+    { label: 'Appointments', path: '/superadmin/appointments', icon: calendarOutline },
+    { label: 'Queue', path: '/superadmin/queue', icon: listOutline },
+    { label: 'Billing', path: '/superadmin/billing', icon: receiptOutline },
+    { label: 'Inventory', path: '/superadmin/inventory', icon: cubeOutline },
+    { label: 'Staff', path: '/superadmin/staff', icon: shieldCheckmarkOutline },
+    { label: 'Analytics', path: '/superadmin/analytics', icon: analyticsOutline },
+    { label: 'Audit Logs', path: '/superadmin/audit-logs', icon: barChartOutline },
+    { label: 'Messages', path: '/superadmin/messages', icon: mailOutline },
+  ],
+}

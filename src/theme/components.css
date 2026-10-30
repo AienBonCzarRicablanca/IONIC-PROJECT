@@ -1,0 +1,283 @@
+.app-shell .layout-main ion-content,
+.app-shell > ion-content {
+  --background: var(--canvas);
+  --padding-top: 10px;
+  --padding-bottom: 24px;
+  --padding-start: max(14px, env(safe-area-inset-left));
+  --padding-end: max(14px, env(safe-area-inset-right));
+}
+
+.app-shell ion-header ion-toolbar {
+  --background: var(--surface);
+  --color: var(--clinic-ink);
+  --border-width: 0 0 1px;
+  --border-color: var(--line);
+  --min-height: 62px;
+  --padding-start: 6px;
+  --padding-end: 8px;
+}
+
+.app-shell ion-title {
+  padding-inline: 4px;
+  color: var(--clinic-ink);
+  font-family: var(--font-display);
+  font-size: 1.22rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.app-shell ion-menu-button,
+.app-shell ion-back-button {
+  --color: var(--clinic-ink);
+}
+
+ion-back-button::part(text) {
+  display: none;
+}
+
+.app-shell ion-header ion-button {
+  --border-radius: var(--radius-sm);
+  margin-inline: 2px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.app-shell ion-card {
+  --background: var(--surface);
+  margin: 0 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.app-shell ion-card-title {
+  color: var(--clinic-ink);
+  font-family: var(--font-display);
+  font-size: 1.28rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.app-shell ion-card-subtitle {
+  color: var(--clinic-blue);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-shell ion-item {
+  --border-color: var(--line);
+  --min-height: 52px;
+  --ripple-color: rgb(40 127 145 / 16%);
+  font-size: 0.95rem;
+}
+
+.app-shell ion-label h2 {
+  color: var(--clinic-ink);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.app-shell ion-label p {
+  color: var(--muted);
+}
+
+.app-shell ion-chip {
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.app-shell ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+.app-shell ion-searchbar {
+  --background: var(--surface);
+  --border-radius: var(--radius-sm);
+  --box-shadow: none;
+  --placeholder-color: var(--muted);
+  --icon-color: var(--clinic-blue);
+  padding-inline: 0;
+}
+
+.app-shell ion-segment {
+  --background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.person-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-shell .section {
+  margin: 18px 2px 8px;
+  color: var(--clinic-ink);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.app-shell .greeting {
+  margin: 2px 0 14px;
+  color: var(--clinic-ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 2.4vw, 2.15rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.stat-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  margin: 2px 0 16px;
+}
+
+.stat {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  align-content: end;
+  min-height: 112px;
+  padding: 16px 16px 14px;
+  overflow: hidden;
+  color: var(--clinic-ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+}
+
+.stat::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 16px;
+  left: 16px;
+  height: 3px;
+  background: var(--clinic-teal);
+  border-radius: 0 0 3px 3px;
+}
+
+.stat span:last-child {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.stat:focus-visible {
+  outline: 2px solid var(--clinic-blue);
+  outline-offset: 3px;
+}
+
+.state-message {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.load-bars {
+  display: grid;
+  gap: 8px;
+  width: min(280px, 100%);
+  margin: 0 auto 12px;
+}
+
+.load-bars ion-skeleton-text {
+  height: 12px;
+  margin: 0;
+  border-radius: 8px;
+}
+
+.load-bars ion-skeleton-text:first-child {
+  width: 72%;
+  height: 22px;
+}
+
+ion-input,
+ion-textarea,
+ion-select {
+  --border-color: var(--line-strong);
+  --border-radius: var(--radius-sm);
+  --highlight-color-focused: var(--clinic-blue);
+  --padding-start: 14px;
+  --padding-end: 14px;
+}
+
+ion-button {
+  --border-radius: var(--radius-sm);
+  --box-shadow: none;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+ion-button::part(native):focus-visible,
+ion-tab-button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--clinic-blue);
+  outline-offset: 2px;
+}
+
+ion-skeleton-text {
+  --background: var(--skeleton);
+  border-radius: 8px;
+}
+
+ion-toast {
+  --border-radius: 14px;
+  --box-shadow: var(--shadow-md);
+  font-weight: 600;
+}
+
+ion-modal {
+  --border-radius: 20px;
+  --box-shadow: var(--shadow-md);
+}
+
+ion-alert {
+  --backdrop-opacity: 0.42;
+}
+
+ion-popover {
+  --box-shadow: var(--shadow-md);
+  --width: min(320px, calc(100vw - 24px));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .stat {
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      border-color var(--duration-base) var(--ease-out);
+  }
+
+  .stat:hover {
+    transform: translateY(-2px);
+    border-color: var(--line-strong);
+  }
+
+  ion-button::part(native) {
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  ion-button.ion-activated::part(native) {
+    transform: scale(0.98);
+  }
+}

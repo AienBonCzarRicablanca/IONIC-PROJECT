@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'Dental_Clinic_Management_System',
+  appId: 'com.harbordental.clinic',
+  appName: 'Harbor Dental',
   webDir: 'dist'
 };
 

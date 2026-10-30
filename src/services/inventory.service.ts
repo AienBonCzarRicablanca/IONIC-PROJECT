@@ -1,0 +1,107 @@
+import type { Database } from '../types/database.types'
+import { supabase } from './supabase'
+
+export type InventoryItem = Database['public']['Tables']['inventory_items']['Row']
+export type InventoryTransaction = {
+  id: string
+  transaction_type: Database['public']['Enums']['inventory_transaction_type']
+  quantity_change: number
+  note: string | null
+  created_at: string
+  profiles: { full_name: string } | null
+}
+export type InventoryItemInput = {
+  name: string
+  category: string | null
+  unit: string
+  supplier: string | null
+  unit_cost: number
+  reorder_threshold: number
+}
+
+export type StockAction = 'addition' | 'consumption'
+
+export async function listInventory(clinicId: string) {
+  const { data, error } = await supabase
+    .from('inventory_items')
+    .select('*')
+    .eq('clinic_id', clinicId)
+    .eq('is_archived', false)
+    .order('name')
+  if (error) throw new Error(error.message)
+  return data
+}
+
+export async function listItemTransactions(clinicId: string, itemId: string) {
+  const { data, error } = await supabase
+    .from('inventory_transactions')
+    .select(
+      'id, transaction_type, quantity_change, note, created_at, profiles!inventory_transactions_actor_id_fkey(full_name)',
+    )
+    .eq('clinic_id', clinicId)
+    .eq('item_id', itemId)
+    .order('created_at', { ascending: false })
+    .limit(50)
+  if (error) throw new Error(error.message)
+  return data as InventoryTransaction[]
+}
+
+export const isLowStock = (item: InventoryItem) => item.quantity <= item.reorder_threshold
+
+export async function createItem(clinicId: string, input: InventoryItemInput) {
+  const { error } = await supabase.from('inventory_items').insert({ ...input, clinic_id: clinicId })
+  if (error) {
+    throw new Error(
+      error.code === '23505' ? 'An item with this name already exists.' : error.message,
+    )
+  }
+}
+
+export async function updateItem(clinicId: string, id: string, input: InventoryItemInput) {
+  const { error } = await supabase
+    .from('inventory_items')
+    .update(input)
+    .eq('clinic_id', clinicId)
+    .eq('id', id)
+  if (error) {
+    throw new Error(
+      error.code === '23505' ? 'An item with this name already exists.' : error.message,
+    )
+  }
+}
+
+export async function archiveItem(clinicId: string, id: string) {
+  const { error } = await supabase
+    .from('inventory_items')
+    .update({ is_archived: true })
+    .eq('clinic_id', clinicId)
+    .eq('id', id)
+  if (error) throw new Error(error.message)
+}
+
+// The database trigger updates stock and rejects results below zero.
+export async function recordStockChange(
+  clinicId: string,
+  actorId: string,
+  item: InventoryItem,
+  action: StockAction,
+  quantity: number,
+  note: string | null,
+) {
+  const change = action === 'addition' ? quantity : -quantity
+  const { error } = await supabase.from('inventory_transactions').insert({
+    clinic_id: clinicId,
+    actor_id: actorId,
+    item_id: item.id,
+    transaction_type: action,
+    quantity_change: change,
+    note,
+  })
+  if (error) {
+    throw new Error(
+      error.message.includes('negative')
+        ? 'Not enough stock for this change.'
+        : error.message,
+    )
+  }
+}

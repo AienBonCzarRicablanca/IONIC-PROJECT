@@ -27,6 +27,11 @@ npm-debug.log*
 /coverage
 /dist
 /node_modules
+
+# Local environment files (never commit real keys)
+.env
+.env.*
+!.env.example
 /platforms
 /plugins
 /www

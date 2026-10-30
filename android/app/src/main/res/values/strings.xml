@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Harbor Dental</string>
+    <string name="title_activity_main">Harbor Dental</string>
+    <string name="package_name">com.harbordental.clinic</string>
+    <string name="custom_url_scheme">com.harbordental.clinic</string>
+</resources>

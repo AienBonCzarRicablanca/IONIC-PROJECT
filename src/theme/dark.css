@@ -1,0 +1,156 @@
+html.ion-palette-dark.ios .hero-section,
+html.ion-palette-dark.md .hero-section,
+html.ion-palette-dark.ios .about-section,
+html.ion-palette-dark.md .about-section,
+html.ion-palette-dark.ios .services-section,
+html.ion-palette-dark.md .services-section,
+html.ion-palette-dark.ios .dentist-section,
+html.ion-palette-dark.md .dentist-section,
+html.ion-palette-dark.ios .why-section,
+html.ion-palette-dark.md .why-section,
+html.ion-palette-dark.ios .gallery-section,
+html.ion-palette-dark.md .gallery-section,
+html.ion-palette-dark.ios .testimonials-section,
+html.ion-palette-dark.md .testimonials-section,
+html.ion-palette-dark.ios .contact-section,
+html.ion-palette-dark.md .contact-section,
+html.ion-palette-dark.ios .hero-bottom,
+html.ion-palette-dark.md .hero-bottom {
+  background: var(--canvas);
+  color: var(--clinic-ink);
+}
+
+html.ion-palette-dark.ios .floating-note,
+html.ion-palette-dark.md .floating-note,
+html.ion-palette-dark.ios .quote-card,
+html.ion-palette-dark.md .quote-card,
+html.ion-palette-dark.ios .service-card,
+html.ion-palette-dark.md .service-card,
+html.ion-palette-dark.ios .service-card-featured,
+html.ion-palette-dark.md .service-card-featured,
+html.ion-palette-dark.ios .dentist-card,
+html.ion-palette-dark.md .dentist-card,
+html.ion-palette-dark.ios .why-features article,
+html.ion-palette-dark.md .why-features article,
+html.ion-palette-dark.ios .contact-card,
+html.ion-palette-dark.md .contact-card,
+html.ion-palette-dark.ios .contact-details > a,
+html.ion-palette-dark.md .contact-details > a,
+html.ion-palette-dark.ios .contact-details > div,
+html.ion-palette-dark.md .contact-details > div,
+html.ion-palette-dark.ios .image-frame,
+html.ion-palette-dark.md .image-frame,
+html.ion-palette-dark.ios .image-fallback,
+html.ion-palette-dark.md .image-fallback,
+html.ion-palette-dark.ios .gallery-grid figure,
+html.ion-palette-dark.md .gallery-grid figure {
+  background: var(--surface);
+  color: var(--clinic-ink);
+  border-color: var(--line);
+}
+
+html.ion-palette-dark.ios .hero-description,
+html.ion-palette-dark.md .hero-description,
+html.ion-palette-dark.ios .hero-proof p,
+html.ion-palette-dark.md .hero-proof p,
+html.ion-palette-dark.ios .floating-note small,
+html.ion-palette-dark.md .floating-note small,
+html.ion-palette-dark.ios .hero-bottom a,
+html.ion-palette-dark.md .hero-bottom a,
+html.ion-palette-dark.ios .about-copy > p,
+html.ion-palette-dark.md .about-copy > p,
+html.ion-palette-dark.ios .photo-caption,
+html.ion-palette-dark.md .photo-caption,
+html.ion-palette-dark.ios .clinic-values small,
+html.ion-palette-dark.md .clinic-values small,
+html.ion-palette-dark.ios .section-heading > p,
+html.ion-palette-dark.md .section-heading > p,
+html.ion-palette-dark.ios .section-heading p,
+html.ion-palette-dark.md .section-heading p,
+html.ion-palette-dark.ios .service-copy p,
+html.ion-palette-dark.md .service-copy p,
+html.ion-palette-dark.ios .service-number,
+html.ion-palette-dark.md .service-number,
+html.ion-palette-dark.ios .services-footnote,
+html.ion-palette-dark.md .services-footnote,
+html.ion-palette-dark.ios .dentist-details p,
+html.ion-palette-dark.md .dentist-details p,
+html.ion-palette-dark.ios .sample-note,
+html.ion-palette-dark.md .sample-note,
+html.ion-palette-dark.ios .why-heading > p,
+html.ion-palette-dark.md .why-heading > p,
+html.ion-palette-dark.ios .why-features p,
+html.ion-palette-dark.md .why-features p,
+html.ion-palette-dark.ios .gallery-heading > p,
+html.ion-palette-dark.md .gallery-heading > p,
+html.ion-palette-dark.ios .contact-copy > p,
+html.ion-palette-dark.md .contact-copy > p,
+html.ion-palette-dark.ios .contact-details small,
+html.ion-palette-dark.md .contact-details small,
+html.ion-palette-dark.ios .form-heading p,
+html.ion-palette-dark.md .form-heading p,
+html.ion-palette-dark.ios .form-disclaimer,
+html.ion-palette-dark.md .form-disclaimer,
+html.ion-palette-dark.ios .quote-person small,
+html.ion-palette-dark.md .quote-person small,
+html.ion-palette-dark.ios .fallback-label,
+html.ion-palette-dark.md .fallback-label,
+html.ion-palette-dark.ios .clinic-map figcaption,
+html.ion-palette-dark.md .clinic-map figcaption {
+  color: var(--muted);
+}
+
+html.ion-palette-dark.ios .hero-proof strong,
+html.ion-palette-dark.md .hero-proof strong,
+html.ion-palette-dark.ios .floating-note strong,
+html.ion-palette-dark.md .floating-note strong,
+html.ion-palette-dark.ios .clinic-values strong,
+html.ion-palette-dark.md .clinic-values strong,
+html.ion-palette-dark.ios .service-copy h3,
+html.ion-palette-dark.md .service-copy h3,
+html.ion-palette-dark.ios .dentist-details h3,
+html.ion-palette-dark.md .dentist-details h3,
+html.ion-palette-dark.ios .why-features h3,
+html.ion-palette-dark.md .why-features h3,
+html.ion-palette-dark.ios .contact-details strong,
+html.ion-palette-dark.md .contact-details strong,
+html.ion-palette-dark.ios .form-heading h3,
+html.ion-palette-dark.md .form-heading h3,
+html.ion-palette-dark.ios .quote-person strong,
+html.ion-palette-dark.md .quote-person strong,
+html.ion-palette-dark.ios form label,
+html.ion-palette-dark.md form label {
+  color: var(--clinic-ink);
+}
+
+html.ion-palette-dark.ios .contact-section ion-input,
+html.ion-palette-dark.md .contact-section ion-input,
+html.ion-palette-dark.ios .contact-section ion-textarea,
+html.ion-palette-dark.md .contact-section ion-textarea {
+  --background: var(--canvas);
+  --placeholder-color: var(--muted);
+  border-color: var(--line);
+  color: var(--clinic-ink);
+}
+
+html.ion-palette-dark.ios .clinic-map,
+html.ion-palette-dark.md .clinic-map {
+  background-color: var(--surface);
+}
+
+html.ion-palette-dark.ios .service-copy a,
+html.ion-palette-dark.md .service-copy a,
+html.ion-palette-dark.ios .services-footnote a,
+html.ion-palette-dark.md .services-footnote a,
+html.ion-palette-dark.ios .about-link,
+html.ion-palette-dark.md .about-link,
+html.ion-palette-dark.ios .why-heading > a,
+html.ion-palette-dark.md .why-heading > a,
+html.ion-palette-dark.ios .text-link,
+html.ion-palette-dark.md .text-link,
+html.ion-palette-dark.ios .note-icon,
+html.ion-palette-dark.md .note-icon,
+html.ion-palette-dark.ios .dentist-specialty,
+html.ion-palette-dark.md .dentist-specialty {
+  color: var(--clinic-blue);
+}
