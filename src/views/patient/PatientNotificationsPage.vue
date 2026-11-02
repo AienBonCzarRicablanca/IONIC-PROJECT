@@ -4,7 +4,7 @@
       <ion-toolbar>
         <ion-buttons slot="start"><ion-menu-button menu="app-menu" aria-label="Open menu" /></ion-buttons>
         <ion-title>Notifications</ion-title>
-        <ion-buttons slot="end"><NotificationButton /></ion-buttons>
+        <ion-buttons slot="end"><HeaderTools notifications /></ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { IonButtons, IonChip, IonContent, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue'
-import NotificationButton from '../../components/common/NotificationButton.vue'
+import HeaderTools from '../../components/common/HeaderTools.vue'
 import { useAuth } from '../../composables/useAuth'
 import { useMyPatient } from '../../composables/useMyPatient'
 import { listMyNotifications, markNotificationRead, type MyNotification } from '../../services/portal.service'

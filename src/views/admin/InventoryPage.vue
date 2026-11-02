@@ -6,14 +6,13 @@
           <ion-menu-button menu="app-menu" aria-label="Open menu" />
         </ion-buttons>
         <ion-title>Inventory</ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="openNew">Add item</ion-button>
-        </ion-buttons>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <div class="inv-page">
+        <PageAction :icon="addOutline" @click="openNew">Add item</PageAction>
         <ion-card v-if="lowStock.length" color="warning">
           <ion-card-content role="alert">
             <strong>Low stock:</strong> {{ lowStock.map((item) => item.name).join(', ') }}
@@ -157,6 +156,9 @@ import {
   IonToast,
   IonToolbar,
 } from '@ionic/vue'
+import { addOutline } from 'ionicons/icons'
+import HeaderTools from '../../components/common/HeaderTools.vue'
+import PageAction from '../../components/common/PageAction.vue'
 import { useAuth } from '../../composables/useAuth'
 import {
   archiveItem,

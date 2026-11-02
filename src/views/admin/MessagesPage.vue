@@ -4,13 +4,12 @@
       <ion-toolbar>
         <ion-buttons slot="start"><ion-menu-button menu="app-menu" aria-label="Open menu" /></ion-buttons>
         <ion-title>Messages</ion-title>
-        <ion-buttons slot="end">
-          <ion-button :disabled="loading" @click="load">Refresh</ion-button>
-        </ion-buttons>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <div class="page">
+        <PageAction :icon="refreshOutline" :disabled="loading" @click="load">Refresh</PageAction>
         <div v-if="loading" class="state-message" role="status">Loading messages...</div>
         <div v-else-if="loadError" class="state-message error-message" role="alert">{{ loadError }}</div>
         <div v-else-if="!messages.length" class="state-message">No website messages yet.</div>
@@ -48,6 +47,9 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue'
+import { refreshOutline } from 'ionicons/icons'
+import HeaderTools from '../../components/common/HeaderTools.vue'
+import PageAction from '../../components/common/PageAction.vue'
 import { useAuth } from '../../composables/useAuth'
 import {
   listContactMessages,

@@ -1,5 +1,8 @@
 <template>
   <AuthShell title="Welcome back" subtitle="Sign in to manage appointments, records, and care.">
+    <template #toolbar-start>
+      <router-link to="/" class="auth-back">Back to website</router-link>
+    </template>
     <div v-if="notice" class="auth-banner auth-banner-success" role="status">
       <ion-icon :icon="checkmarkCircleOutline" /><span>{{ notice }}</span>
     </div>
@@ -40,7 +43,6 @@
       </ion-button>
       <div class="auth-links">
         <router-link to="/forgot-password">Forgot password?</router-link>
-        <router-link to="/">Back to website</router-link>
       </div>
     </form>
 

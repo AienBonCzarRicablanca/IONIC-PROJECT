@@ -6,14 +6,13 @@
           <ion-menu-button menu="app-menu" aria-label="Open menu" />
         </ion-buttons>
         <ion-title>Front Desk Dashboard</ion-title>
-        <ion-buttons slot="end">
-          <ion-button :disabled="loading" @click="load">Refresh</ion-button>
-        </ion-buttons>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <div class="dash-page">
+        <PageAction :icon="refreshOutline" :disabled="loading" @click="load">Refresh</PageAction>
         <div v-if="loading && !summary" class="state-message" role="status">
           <div class="load-bars" aria-hidden="true">
             <ion-skeleton-text animated />
@@ -89,7 +88,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import {
-  IonButton,
   IonButtons,
   IonCard,
   IonCardContent,
@@ -107,6 +105,9 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue'
+import { refreshOutline } from 'ionicons/icons'
+import HeaderTools from '../../components/common/HeaderTools.vue'
+import PageAction from '../../components/common/PageAction.vue'
 import UserAvatar from '../../components/common/UserAvatar.vue'
 import { useAuth } from '../../composables/useAuth'
 import { useAvatarPaths } from '../../composables/useAvatarPaths'

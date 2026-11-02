@@ -3,10 +3,11 @@
     <ion-content :fullscreen="true" class="auth-content">
       <div class="auth-wrap">
         <div class="auth-toolbar">
+          <slot name="toolbar-start" />
           <ThemeToggle icon-only />
         </div>
         <router-link to="/" class="auth-brand" aria-label="Back to Harbor Dental home">
-          <span class="auth-brand-mark"><ion-icon :icon="sparklesOutline" /></span>
+          <img class="auth-brand-mark" :src="'/logo.png'" alt="" />
           <strong>harbor<span> dental</span></strong>
         </router-link>
 
@@ -30,7 +31,7 @@
 
 <script setup lang="ts">
 import { IonContent, IonIcon, IonPage } from '@ionic/vue'
-import { sparklesOutline, warningOutline } from 'ionicons/icons'
+import { warningOutline } from 'ionicons/icons'
 import ThemeToggle from '../common/ThemeToggle.vue'
 import { CONFIG_ERROR } from '../../services/auth.service'
 import { isSupabaseConfigured } from '../../services/supabase'
@@ -61,6 +62,29 @@ defineProps<{
   position: absolute;
   top: max(16px, env(safe-area-inset-top));
   right: max(16px, env(safe-area-inset-right));
+  left: max(16px, env(safe-area-inset-left));
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.auth-toolbar .theme-switch {
+  margin-left: auto;
+}
+
+.auth-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--clinic-ink);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-back:hover,
+.auth-back:focus-visible {
+  color: var(--clinic-blue);
 }
 
 .auth-brand {
@@ -85,12 +109,9 @@ defineProps<{
 .auth-brand-mark {
   width: 40px;
   height: 40px;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  background: var(--clinic-blue);
-  border-radius: 14px;
-  font-size: 20px;
+  display: block;
+  border-radius: 12px;
+  object-fit: cover;
 }
 
 .auth-card {
@@ -126,6 +147,18 @@ defineProps<{
 .auth-form ion-input {
   --border-radius: 10px;
   min-height: 56px;
+}
+
+.auth-card .native-input:-webkit-autofill,
+.auth-card .native-input:-webkit-autofill:hover,
+.auth-card .native-input:-webkit-autofill:focus,
+.auth-card .native-input:-webkit-autofill:active,
+.auth-card .native-input:autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset;
+  box-shadow: 0 0 0 1000px var(--surface) inset;
+  -webkit-text-fill-color: var(--clinic-ink);
+  caret-color: var(--clinic-ink);
+  transition: background-color 99999s ease-out;
 }
 
 .auth-field-error {
@@ -176,7 +209,7 @@ defineProps<{
 
 .auth-links {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   font-size: 13px;
 }

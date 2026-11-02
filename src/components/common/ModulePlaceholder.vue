@@ -6,6 +6,7 @@
           <ion-menu-button menu="app-menu" aria-label="Open menu" />
         </ion-buttons>
         <ion-title>{{ title }}</ion-title>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
 
@@ -54,6 +55,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue'
+import HeaderTools from './HeaderTools.vue'
 import { useAuth } from '../../composables/useAuth'
 import { ROLE_LABEL } from '../../types'
 

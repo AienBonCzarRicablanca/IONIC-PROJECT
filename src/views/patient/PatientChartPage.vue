@@ -4,7 +4,7 @@
       <ion-toolbar>
         <ion-buttons slot="start"><ion-menu-button menu="app-menu" aria-label="Open menu" /></ion-buttons>
         <ion-title>My Dental Chart</ion-title>
-        <ion-buttons slot="end"><NotificationButton /></ion-buttons>
+        <ion-buttons slot="end"><HeaderTools notifications /></ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -36,7 +36,7 @@ import {
   IonButtons, IonContent, IonHeader, IonLabel, IonMenuButton, IonPage, IonSegment, IonSegmentButton,
   IonTitle, IonToolbar,
 } from '@ionic/vue'
-import NotificationButton from '../../components/common/NotificationButton.vue'
+import HeaderTools from '../../components/common/HeaderTools.vue'
 import OdontogramChart from '../../components/clinical/OdontogramChart.vue'
 import { useMyPatient } from '../../composables/useMyPatient'
 import { listOdontogram, type DentalCondition, type OdontogramEntry } from '../../services/clinical.service'

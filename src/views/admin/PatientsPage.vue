@@ -6,14 +6,13 @@
           <ion-menu-button menu="app-menu" aria-label="Open menu" />
         </ion-buttons>
         <ion-title>Patient Management</ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="openNewPatient">Add patient</ion-button>
-        </ion-buttons>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content class="patients-content">
       <div class="patients-page">
+        <PageAction :icon="personAddOutline" @click="openNewPatient">Add patient</PageAction>
         <ion-card class="patient-tools">
           <ion-card-content>
             <ion-searchbar
@@ -300,6 +299,9 @@ import {
   IonToast,
   IonToolbar,
 } from '@ionic/vue'
+import { personAddOutline } from 'ionicons/icons'
+import PageAction from '../../components/common/PageAction.vue'
+import HeaderTools from '../../components/common/HeaderTools.vue'
 import UserAvatar from '../../components/common/UserAvatar.vue'
 import { useAuth } from '../../composables/useAuth'
 import { useAvatarPaths } from '../../composables/useAvatarPaths'

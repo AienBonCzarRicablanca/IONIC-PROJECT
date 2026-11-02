@@ -6,14 +6,13 @@
           <ion-menu-button menu="app-menu" aria-label="Open menu" />
         </ion-buttons>
         <ion-title>Staff Management</ion-title>
-        <ion-buttons slot="end">
-          <ion-button :disabled="loading" @click="load">Refresh</ion-button>
-        </ion-buttons>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <div class="staff-page">
+        <PageAction :icon="refreshOutline" :disabled="loading" @click="load">Refresh</PageAction>
         <ion-card>
           <ion-card-content>
             New staff register at <strong>/register</strong> and confirm their email. They appear
@@ -110,6 +109,9 @@ import {
   IonToggle,
   IonToolbar,
 } from '@ionic/vue'
+import { refreshOutline } from 'ionicons/icons'
+import HeaderTools from '../../components/common/HeaderTools.vue'
+import PageAction from '../../components/common/PageAction.vue'
 import UserAvatar from '../../components/common/UserAvatar.vue'
 import { useAuth } from '../../composables/useAuth'
 import { useAvatarPaths } from '../../composables/useAvatarPaths'

@@ -4,6 +4,7 @@
       <ion-toolbar>
         <ion-buttons slot="start"><ion-menu-button menu="app-menu" aria-label="Open menu" /></ion-buttons>
         <ion-title>Audit Logs</ion-title>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -41,6 +42,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue'
+import HeaderTools from '../../components/common/HeaderTools.vue'
 import { useAuth } from '../../composables/useAuth'
 import { listAuditLogs, type AuditLogRow } from '../../services/owner.service'
 

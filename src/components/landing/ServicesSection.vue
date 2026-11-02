@@ -41,85 +41,11 @@
 
 <script setup lang="ts">
 import { IonCol, IonGrid, IonIcon, IonRow } from '@ionic/vue'
-import {
-  arrowForwardOutline,
-  bandageOutline,
-  colorPaletteOutline,
-  fitnessOutline,
-  happyOutline,
-  chatbubbleEllipsesOutline,
-  medicalOutline,
-  scanOutline,
-  sparklesOutline,
-  timeOutline,
-} from 'ionicons/icons'
+import { arrowForwardOutline, sparklesOutline } from 'ionicons/icons'
+import { CLINIC_SERVICES } from '../../content/clinicServices'
 import ImagePlaceholder from './ImagePlaceholder.vue'
 
-const services = [
-  {
-    title: 'Dental cleaning',
-    description: 'A fresh start for your smile with a gentle, thorough clean.',
-    image: 'dental-cleaning.jpg',
-    imageAlt: 'Dental cleaning service',
-    icon: sparklesOutline,
-  },
-  {
-    title: 'Dental fillings',
-    description: 'Comfort-first repairs that help your natural smile shine.',
-    image: 'dental-filling.jpg',
-    imageAlt: 'Dental filling service',
-    icon: bandageOutline,
-  },
-  {
-    title: 'Teeth whitening',
-    description: 'A brighter look, thoughtfully tailored to your smile.',
-    image: 'teeth-whitening.jpg',
-    imageAlt: 'Teeth whitening service',
-    icon: colorPaletteOutline,
-  },
-  {
-    title: 'Braces & alignment',
-    description: 'Personalized options for a smile that feels like you.',
-    image: 'braces-and-alignment.jpg',
-    imageAlt: 'Braces and alignment service',
-    icon: fitnessOutline,
-  },
-  {
-    title: 'Tooth extraction',
-    description: 'Considerate care and clear support at every step.',
-    image: 'tooth-extraction.jpg',
-    imageAlt: 'Tooth extraction service',
-    icon: medicalOutline,
-  },
-  {
-    title: 'Root canal care',
-    description: 'Relief-focused treatment to help protect your tooth.',
-    image: 'root-canal.jpg',
-    imageAlt: 'Root canal service',
-    icon: timeOutline,
-  },
-  {
-    title: 'Dental X-rays',
-    description: 'A clearer picture to guide confident, informed care.',
-    image: 'dental-x-ray.jpeg',
-    imageAlt: 'Dental X-ray service',
-    icon: scanOutline,
-  },
-  {
-    title: 'Family dentistry',
-    description: 'Welcoming check-ups for the whole family, big and small.',
-    image: 'family-dentistry.jpg',
-    imageAlt: 'Family dentistry service',
-    icon: happyOutline,
-  },
-  {
-    title: 'Dental consultation',
-    description: 'A relaxed conversation to talk through your questions and options.',
-    image: 'dental-consultation.jpg',
-    imageAlt: 'Dental consultation service',
-    icon: chatbubbleEllipsesOutline,
-  },
-]
+const services = CLINIC_SERVICES
 </script>
 
 <style scoped>

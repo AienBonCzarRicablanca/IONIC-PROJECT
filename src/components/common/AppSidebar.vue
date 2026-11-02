@@ -3,7 +3,7 @@
     <ion-header class="sidebar-header">
       <ion-toolbar>
         <router-link to="/" class="sidebar-brand">
-          <span class="sidebar-brand-mark"><ion-icon :icon="sparklesOutline" /></span>
+          <img class="sidebar-brand-mark" :src="'/logo.png'" alt="" />
           <strong>harbor<span> dental</span></strong>
         </router-link>
       </ion-toolbar>
@@ -11,29 +11,23 @@
 
     <ion-content>
       <div class="sidebar-profile">
-        <div class="sidebar-user">
-          <ion-avatar>
-            <img v-if="avatarUrl" :src="avatarUrl" alt="" />
-            <span v-else>{{ initials }}</span>
-          </ion-avatar>
-          <div>
-            <strong>{{ name }}</strong>
-            <small>{{ roleLabel }}</small>
-            <small v-if="avatarError" class="sidebar-avatar-error" role="alert">{{ avatarError }}</small>
-          </div>
-        </div>
         <ion-menu-toggle :auto-hide="false">
-          <ion-item
-            button
-            :detail="false"
-            router-link="/profile"
-            class="sidebar-profile-link"
-            :class="{ 'sidebar-active': isActive('/profile') }"
+          <router-link
+            to="/profile"
+            class="sidebar-user"
+            :class="{ 'sidebar-user-active': isActive('/profile') }"
             :aria-current="isActive('/profile') ? 'page' : undefined"
           >
-            <ion-icon slot="start" :icon="personCircleOutline" aria-hidden="true" />
-            <ion-label>My Profile</ion-label>
-          </ion-item>
+            <ion-avatar>
+              <img v-if="avatarUrl" :src="avatarUrl" alt="" />
+              <span v-else>{{ initials }}</span>
+            </ion-avatar>
+            <div>
+              <strong>{{ name }}</strong>
+              <small>{{ roleLabel }}</small>
+              <small v-if="avatarError" class="sidebar-avatar-error" role="alert">{{ avatarError }}</small>
+            </div>
+          </router-link>
         </ion-menu-toggle>
       </div>
       <ion-list lines="none" class="sidebar-list">
@@ -54,7 +48,6 @@
     </ion-content>
 
     <ion-footer>
-      <ThemeToggle />
       <ion-button
         fill="outline"
         expand="block"
@@ -88,8 +81,7 @@ import {
   IonSpinner,
   IonToolbar,
 } from '@ionic/vue'
-import { logOutOutline, personCircleOutline, sparklesOutline } from 'ionicons/icons'
-import ThemeToggle from './ThemeToggle.vue'
+import { logOutOutline } from 'ionicons/icons'
 import type { NavItem } from '../../types'
 
 const props = defineProps<{
@@ -160,12 +152,9 @@ function isActive(path: string) {
 .sidebar-brand-mark {
   width: 36px;
   height: 36px;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  background: var(--clinic-blue);
-  border-radius: 12px;
-  font-size: 18px;
+  display: block;
+  border-radius: 10px;
+  object-fit: cover;
 }
 
 .sidebar-list {
@@ -216,8 +205,22 @@ function isActive(path: string) {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 0 12px;
-  padding: 14px 4px 4px;
+  margin: 8px 12px 10px;
+  padding: 10px;
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.sidebar-user:hover,
+.sidebar-user:focus-visible {
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.sidebar-user-active {
+  background: var(--accent-soft);
 }
 
 .sidebar-user ion-avatar {
@@ -256,33 +259,6 @@ function isActive(path: string) {
 
 .sidebar-user .sidebar-avatar-error {
   color: var(--ion-color-danger);
-}
-
-.sidebar-profile-link {
-  --background: transparent;
-  --color: var(--clinic-ink);
-  --border-radius: 12px;
-  --min-height: 44px;
-  --padding-start: 12px;
-  --inner-padding-end: 12px;
-  margin: 4px 12px 10px;
-  font-size: 0.94rem;
-  font-weight: 600;
-}
-
-.sidebar-profile-link ion-icon {
-  color: var(--muted);
-  font-size: 20px;
-}
-
-.sidebar-profile-link.sidebar-active {
-  --background: var(--accent-soft);
-  --color: var(--clinic-blue-deep);
-  box-shadow: inset 3px 0 0 var(--clinic-teal);
-}
-
-.sidebar-profile-link.sidebar-active ion-icon {
-  color: var(--clinic-blue);
 }
 
 .app-sidebar ion-footer {

@@ -6,14 +6,13 @@
           <ion-menu-button menu="app-menu" aria-label="Open menu" />
         </ion-buttons>
         <ion-title>Appointment Calendar</ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="openNew">New appointment</ion-button>
-        </ion-buttons>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <div class="appt-page">
+        <PageAction :icon="addOutline" @click="openNew">New appointment</PageAction>
         <ion-card>
           <ion-card-content class="appt-tools">
             <ion-segment v-model="view" aria-label="Calendar view">
@@ -95,54 +94,53 @@
               </ion-card-header>
               <ion-card-content>
                 <p v-if="!column.items.length" class="state-message">No appointments.</p>
-                <ion-list v-else lines="full">
-                  <ion-item v-for="appt in column.items" :key="appt.id" :detail="false">
-                    <UserAvatar
-                      slot="start"
-                      :name="appt.patients?.full_name ?? 'Patient'"
-                      :path="avatars.pathFor(appt.patients?.profile_id)"
-                    />
-                    <ion-label class="ion-text-wrap">
-                      <h2>{{ timeRange(appt) }} · {{ appt.patients?.full_name ?? 'Patient' }}</h2>
-                      <p>{{ appt.services?.name ?? 'Service' }}</p>
-                      <p v-if="appt.reason">{{ appt.reason }}</p>
-                    </ion-label>
-                    <ion-chip :color="STATUS_COLORS[appt.status]">{{ statusLabel(appt.status) }}</ion-chip>
-                    <ion-button v-if="isActive(appt)" slot="end" fill="clear" size="small" @click="openEdit(appt)">
-                      Reschedule
-                    </ion-button>
-                    <ion-button
-                      v-if="appt.status === 'pending'"
-                      slot="end"
-                      fill="clear"
-                      size="small"
-                      @click="changeStatus(appt, 'confirmed')"
-                    >Confirm</ion-button>
-                    <ion-button
-                      v-if="isActive(appt)"
-                      slot="end"
-                      fill="clear"
-                      size="small"
-                      @click="changeStatus(appt, 'completed')"
-                    >Complete</ion-button>
-                    <ion-button
-                      v-if="isActive(appt)"
-                      slot="end"
-                      fill="clear"
-                      size="small"
-                      color="danger"
-                      @click="changeStatus(appt, 'no_show')"
-                    >No-show</ion-button>
-                    <ion-button
-                      v-if="isActive(appt)"
-                      slot="end"
-                      fill="clear"
-                      size="small"
-                      color="danger"
-                      @click="changeStatus(appt, 'cancelled')"
-                    >Cancel</ion-button>
-                  </ion-item>
-                </ion-list>
+                <div v-else class="appt-list">
+                  <article v-for="appt in column.items" :key="appt.id" class="appt-row">
+                    <div class="appt-main">
+                      <UserAvatar
+                        :name="appt.patients?.full_name ?? 'Patient'"
+                        :path="avatars.pathFor(appt.patients?.profile_id)"
+                      />
+                      <div class="appt-copy">
+                        <h2>{{ timeRange(appt) }} · {{ appt.patients?.full_name ?? 'Patient' }}</h2>
+                        <p>{{ appt.services?.name ?? 'Service' }}</p>
+                        <p v-if="appt.reason">{{ appt.reason }}</p>
+                        <ion-chip :color="STATUS_COLORS[appt.status]">{{ statusLabel(appt.status) }}</ion-chip>
+                      </div>
+                    </div>
+                    <div class="appt-actions">
+                      <ion-button v-if="isActive(appt)" fill="outline" size="small" @click="openEdit(appt)">
+                        Reschedule
+                      </ion-button>
+                      <ion-button
+                        v-if="appt.status === 'pending'"
+                        fill="outline"
+                        size="small"
+                        @click="changeStatus(appt, 'confirmed')"
+                      >Confirm</ion-button>
+                      <ion-button
+                        v-if="isActive(appt)"
+                        fill="outline"
+                        size="small"
+                        @click="changeStatus(appt, 'completed')"
+                      >Complete</ion-button>
+                      <ion-button
+                        v-if="isActive(appt)"
+                        fill="outline"
+                        size="small"
+                        color="danger"
+                        @click="changeStatus(appt, 'no_show')"
+                      >No-show</ion-button>
+                      <ion-button
+                        v-if="isActive(appt)"
+                        fill="outline"
+                        size="small"
+                        color="danger"
+                        @click="changeStatus(appt, 'cancelled')"
+                      >Cancel</ion-button>
+                    </div>
+                  </article>
+                </div>
               </ion-card-content>
             </ion-card>
           </div>
@@ -153,90 +151,61 @@
             </ion-card-header>
             <ion-card-content>
               <p v-if="!day.items.length" class="state-message">No appointments.</p>
-              <ion-list v-else lines="full">
-                <template v-for="appt in day.items" :key="appt.id">
-                <ion-item :detail="false">
-                  <UserAvatar
-                    slot="start"
-                    :name="appt.patients?.full_name ?? 'Patient'"
-                    :path="avatars.pathFor(appt.patients?.profile_id)"
-                  />
-                  <ion-label class="ion-text-wrap">
-                    <h2>
-                      {{ timeRange(appt) }} · {{ appt.patients?.full_name ?? 'Patient' }}
-                    </h2>
-                    <p class="person-line">
-                      <UserAvatar
-                        size="sm"
-                        :name="appt.dentists?.profiles?.full_name ?? 'Dentist'"
-                        :path="avatars.pathFor(appt.dentists?.profile_id)"
-                      />
-                      {{ appt.services?.name ?? 'Service' }} with
-                      {{ appt.dentists?.profiles?.full_name ?? 'Dentist' }}
-                    </p>
-                    <p v-if="appt.reason">{{ appt.reason }}</p>
-                  </ion-label>
-                  <ion-chip :color="STATUS_COLORS[appt.status]">
-                    {{ statusLabel(appt.status) }}
-                  </ion-chip>
-                  <ion-button
-                    slot="end"
-                    fill="clear"
-                    size="small"
-                    @click="toggleHistory(appt)"
-                  >
-                    History
-                  </ion-button>
-                  <ion-button
-                    v-if="isActive(appt)"
-                    slot="end"
-                    fill="clear"
-                    size="small"
-                    @click="openEdit(appt)"
-                  >
-                    Reschedule
-                  </ion-button>
-                  <ion-button
-                    v-if="appt.status === 'pending'"
-                    slot="end"
-                    fill="clear"
-                    size="small"
-                    @click="changeStatus(appt, 'confirmed')"
-                  >
-                    Confirm
-                  </ion-button>
-                  <ion-button
-                    v-if="isActive(appt)"
-                    slot="end"
-                    fill="clear"
-                    size="small"
-                    @click="changeStatus(appt, 'completed')"
-                  >
-                    Complete
-                  </ion-button>
-                  <ion-button
-                    v-if="isActive(appt)"
-                    slot="end"
-                    fill="clear"
-                    size="small"
-                    color="danger"
-                    @click="changeStatus(appt, 'no_show')"
-                  >
-                    No-show
-                  </ion-button>
-                  <ion-button
-                    v-if="isActive(appt)"
-                    slot="end"
-                    fill="clear"
-                    size="small"
-                    color="danger"
-                    @click="changeStatus(appt, 'cancelled')"
-                  >
-                    Cancel
-                  </ion-button>
-                </ion-item>
-                <ion-item v-if="openHistoryId === appt.id" lines="none">
-                  <ion-label class="ion-text-wrap status-history">
+              <div v-else class="appt-list">
+                <article v-for="appt in day.items" :key="appt.id" class="appt-row">
+                  <div class="appt-main">
+                    <UserAvatar
+                      :name="appt.patients?.full_name ?? 'Patient'"
+                      :path="avatars.pathFor(appt.patients?.profile_id)"
+                    />
+                    <div class="appt-copy">
+                      <h2>{{ timeRange(appt) }} · {{ appt.patients?.full_name ?? 'Patient' }}</h2>
+                      <p class="person-line">
+                        <UserAvatar
+                          size="sm"
+                          :name="appt.dentists?.profiles?.full_name ?? 'Dentist'"
+                          :path="avatars.pathFor(appt.dentists?.profile_id)"
+                        />
+                        {{ appt.services?.name ?? 'Service' }} with
+                        {{ appt.dentists?.profiles?.full_name ?? 'Dentist' }}
+                      </p>
+                      <p v-if="appt.reason">{{ appt.reason }}</p>
+                      <ion-chip :color="STATUS_COLORS[appt.status]">{{ statusLabel(appt.status) }}</ion-chip>
+                    </div>
+                  </div>
+                  <div class="appt-actions">
+                    <ion-button fill="outline" size="small" @click="toggleHistory(appt)">History</ion-button>
+                    <ion-button v-if="isActive(appt)" fill="outline" size="small" @click="openEdit(appt)">
+                      Reschedule
+                    </ion-button>
+                    <ion-button
+                      v-if="appt.status === 'pending'"
+                      fill="outline"
+                      size="small"
+                      @click="changeStatus(appt, 'confirmed')"
+                    >Confirm</ion-button>
+                    <ion-button
+                      v-if="isActive(appt)"
+                      fill="outline"
+                      size="small"
+                      @click="changeStatus(appt, 'completed')"
+                    >Complete</ion-button>
+                    <ion-button
+                      v-if="isActive(appt)"
+                      fill="outline"
+                      size="small"
+                      color="danger"
+                      @click="changeStatus(appt, 'no_show')"
+                    >No-show</ion-button>
+                    <ion-button
+                      v-if="isActive(appt)"
+                      fill="outline"
+                      size="small"
+                      color="danger"
+                      @click="changeStatus(appt, 'cancelled')"
+                    >Cancel</ion-button>
+                  </div>
+                  <div v-if="openHistoryId === appt.id" class="status-history">
                     <p v-if="historyLoading">Loading status history...</p>
                     <p v-else-if="historyError" class="error-message">{{ historyError }}</p>
                     <p v-else-if="!history.length">No status changes recorded.</p>
@@ -245,10 +214,9 @@
                         {{ historyLabel(entry) }} · {{ historyWhen(entry.changed_at) }}
                       </p>
                     </template>
-                  </ion-label>
-                </ion-item>
-                </template>
-              </ion-list>
+                  </div>
+                </article>
+              </div>
             </ion-card-content>
           </ion-card>
         </template>
@@ -358,9 +326,7 @@ import {
   IonContent,
   IonHeader,
   IonInput,
-  IonItem,
   IonLabel,
-  IonList,
   IonMenuButton,
   IonModal,
   IonPage,
@@ -374,6 +340,9 @@ import {
   IonToast,
   IonToolbar,
 } from '@ionic/vue'
+import { addOutline } from 'ionicons/icons'
+import HeaderTools from '../../components/common/HeaderTools.vue'
+import PageAction from '../../components/common/PageAction.vue'
 import UserAvatar from '../../components/common/UserAvatar.vue'
 import { useAuth } from '../../composables/useAuth'
 import { useAvatarPaths } from '../../composables/useAvatarPaths'
@@ -797,6 +766,73 @@ async function changeStatus(appt: AppointmentRow, status: AppointmentStatus) {
   gap: 0.5rem;
 }
 
+.dentist-column {
+  height: fit-content;
+  align-self: start;
+}
+
+.appt-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.appt-row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.7rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.appt-row:first-child {
+  padding-top: 0.15rem;
+}
+
+.appt-row:last-child {
+  padding-bottom: 0.15rem;
+  border-bottom: 0;
+}
+
+.appt-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.appt-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.appt-copy h2 {
+  margin: 0;
+  color: var(--clinic-ink);
+  font-size: 0.98rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.appt-copy p {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.appt-copy ion-chip {
+  margin: 0.5rem 0 0;
+}
+
+.appt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.appt-actions ion-button {
+  margin: 0;
+}
+
 .month-calendar {
   overflow: hidden;
   border: 1px solid var(--ion-color-step-150, #dce2e4);
@@ -884,9 +920,12 @@ async function changeStatus(appt: AppointmentRow, status: AppointmentStatus) {
 }
 
 .status-history {
-  margin-inline-start: 52px;
   color: var(--muted);
   font-size: 0.86rem;
+}
+
+.status-history p {
+  margin: 0.15rem 0;
 }
 
 @media (max-width: 600px) {

@@ -6,6 +6,7 @@
           <ion-menu-button menu="app-menu" aria-label="Open menu" />
         </ion-buttons>
         <ion-title>Assigned Patients</ion-title>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
 
@@ -61,6 +62,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue'
+import HeaderTools from '../../components/common/HeaderTools.vue'
 import UserAvatar from '../../components/common/UserAvatar.vue'
 import { useAuth } from '../../composables/useAuth'
 import { useAvatarPaths } from '../../composables/useAvatarPaths'

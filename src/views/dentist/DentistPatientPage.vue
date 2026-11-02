@@ -6,6 +6,7 @@
           <ion-back-button default-href="/dentist/patients" text="" aria-label="Back" />
         </ion-buttons>
         <ion-title>{{ patient?.full_name ?? 'Patient chart' }}</ion-title>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
       <ion-toolbar>
         <ion-segment v-model="tab" aria-label="Chart section">
@@ -226,6 +227,7 @@ import {
   IonToast,
   IonToolbar,
 } from '@ionic/vue'
+import HeaderTools from '../../components/common/HeaderTools.vue'
 import OdontogramChart from '../../components/clinical/OdontogramChart.vue'
 import { ageLabel, sexLabel } from '../../utils/patientDetails'
 import { useAuth } from '../../composables/useAuth'

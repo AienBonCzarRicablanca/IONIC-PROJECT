@@ -4,7 +4,7 @@
       <ion-toolbar>
         <ion-buttons slot="start"><ion-menu-button menu="app-menu" aria-label="Open menu" /></ion-buttons>
         <ion-title>Payment History</ion-title>
-        <ion-buttons slot="end"><NotificationButton /></ion-buttons>
+        <ion-buttons slot="end"><HeaderTools notifications /></ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -77,7 +77,7 @@ import {
   IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonPage, IonTitle, IonToolbar,
 } from '@ionic/vue'
 import PaymentCheckout from '../../components/billing/PaymentCheckout.vue'
-import NotificationButton from '../../components/common/NotificationButton.vue'
+import HeaderTools from '../../components/common/HeaderTools.vue'
 import { useMyPatient } from '../../composables/useMyPatient'
 import { invoiceBalance, listMyInvoices, simulateMyPayment, type MyInvoice } from '../../services/portal.service'
 

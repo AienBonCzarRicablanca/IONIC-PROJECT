@@ -3,7 +3,7 @@
     <div class="footer-main">
       <div class="footer-brand">
         <a href="#home" class="brand">
-          <span class="brand-mark"><ion-icon :icon="sparklesOutline" /></span>
+          <img class="brand-mark" :src="'/logo.png'" alt="" />
           <span class="brand-copy"><strong>harbor<span> dental</span></strong><small>CARE THAT FEELS DIFFERENT</small></span>
         </a>
         <p>A little more comfort, a lot more care. We’re happy you’re here.</p>
@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { logoFacebook, logoInstagram, logoLinkedin, sparklesOutline } from 'ionicons/icons'
+import { logoFacebook, logoInstagram, logoLinkedin } from 'ionicons/icons'
 </script>
 
 <style scoped>
@@ -70,12 +70,9 @@ import { logoFacebook, logoInstagram, logoLinkedin, sparklesOutline } from 'ioni
 .brand-mark {
   width: 38px;
   height: 38px;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  background: #3aa895;
-  border-radius: 13px;
-  font-size: 19px;
+  display: block;
+  border-radius: 12px;
+  object-fit: cover;
 }
 
 .brand-copy {

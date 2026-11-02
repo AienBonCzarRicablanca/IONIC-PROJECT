@@ -16,6 +16,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    exclude: ['@mediapipe/tasks-vision'],
+  },
   test: {
     globals: true,
     environment: 'jsdom'

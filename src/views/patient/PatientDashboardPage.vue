@@ -4,14 +4,16 @@
       <ion-toolbar>
         <ion-buttons slot="start"><ion-menu-button menu="app-menu" aria-label="Open menu" /></ion-buttons>
         <ion-title>My Dashboard</ion-title>
-        <ion-buttons slot="end">
-          <ion-button :disabled="loading" @click="reload">Refresh</ion-button>
-          <NotificationButton />
-        </ion-buttons>
+        <ion-buttons slot="end"><HeaderTools notifications /></ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <div class="page">
+        <PageAction :icon="refreshOutline" :disabled="loading" @click="reload">Refresh</PageAction>
+        <router-link class="try-on" to="/patient/braces">
+          <strong>Try on braces</strong>
+          <span>Live camera preview. Change the design, then save a photo.</span>
+        </router-link>
         <div v-if="loadError" class="state-message error-message" role="alert">{{ loadError }}</div>
         <div v-else-if="loading && !patient" class="state-message" role="status">
           <div class="load-bars" aria-hidden="true">
@@ -65,10 +67,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import {
-  IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent,
+  IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent,
   IonHeader, IonMenuButton, IonPage, IonSkeletonText, IonTitle, IonToolbar,
 } from '@ionic/vue'
-import NotificationButton from '../../components/common/NotificationButton.vue'
+import { refreshOutline } from 'ionicons/icons'
+import HeaderTools from '../../components/common/HeaderTools.vue'
+import PageAction from '../../components/common/PageAction.vue'
 import { useAuth } from '../../composables/useAuth'
 import { useMyPatient } from '../../composables/useMyPatient'
 import * as portal from '../../services/portal.service'
@@ -105,6 +109,19 @@ const { patient, loading, loadError, reload } = useMyPatient(async (p) => {
 
 <style scoped>
 .page { margin: 0 auto; max-width: 900px; padding: 4px 2px 12px; }
+.try-on {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  color: var(--clinic-ink);
+  text-decoration: none;
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+.try-on strong { font-size: 1.02rem; }
+.try-on span { color: var(--muted); font-size: 0.92rem; }
 .state-message { padding: 1.25rem 1rem; text-align: center; }
 .error-message { color: var(--ion-color-danger); }
 </style>

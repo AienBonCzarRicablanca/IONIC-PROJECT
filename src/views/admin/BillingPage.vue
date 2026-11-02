@@ -6,14 +6,13 @@
           <ion-menu-button menu="app-menu" aria-label="Open menu" />
         </ion-buttons>
         <ion-title>Billing & Invoicing</ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="newOpen = true">New invoice</ion-button>
-        </ion-buttons>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <div class="billing-page">
+        <PageAction :icon="addOutline" @click="newOpen = true">New invoice</PageAction>
         <div v-if="loading" class="state-message" role="status">Loading invoices...</div>
         <div v-else-if="loadError" class="state-message error-message" role="alert">
           {{ loadError }}
@@ -204,7 +203,10 @@ import {
   IonToast,
   IonToolbar,
 } from '@ionic/vue'
+import { addOutline } from 'ionicons/icons'
 import PaymentCheckout from '../../components/billing/PaymentCheckout.vue'
+import HeaderTools from '../../components/common/HeaderTools.vue'
+import PageAction from '../../components/common/PageAction.vue'
 import UserAvatar from '../../components/common/UserAvatar.vue'
 import { useAuth } from '../../composables/useAuth'
 import { useAvatarPaths } from '../../composables/useAvatarPaths'

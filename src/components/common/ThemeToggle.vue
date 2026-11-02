@@ -1,5 +1,21 @@
 <template>
-  <button type="button" class="theme-switch" :class="{ 'theme-switch-icon': iconOnly }" :aria-label="ariaLabel" @click="cycle">
+  <ion-button
+    v-if="header"
+    class="theme-header"
+    fill="clear"
+    :aria-label="ariaLabel"
+    @click="cycle"
+  >
+    <ion-icon slot="icon-only" :icon="icon" />
+  </ion-button>
+  <button
+    v-else
+    type="button"
+    class="theme-switch"
+    :class="{ 'theme-switch-icon': iconOnly }"
+    :aria-label="ariaLabel"
+    @click="cycle"
+  >
     <ion-icon :icon="icon" aria-hidden="true" />
     <span v-if="!iconOnly">{{ label }} theme</span>
   </button>
@@ -7,16 +23,26 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { IonIcon } from '@ionic/vue'
+import { IonButton, IonIcon } from '@ionic/vue'
 import { useTheme } from '../../composables/useTheme'
 
-defineProps<{ iconOnly?: boolean }>()
+defineProps<{
+  iconOnly?: boolean
+  header?: boolean
+}>()
 
 const { label, icon, cycle } = useTheme()
 const ariaLabel = computed(() => `${label.value} theme. Activate to change the color theme.`)
 </script>
 
 <style scoped>
+.theme-header {
+  --color: var(--clinic-ink);
+  width: 44px;
+  height: 44px;
+  margin: 0;
+}
+
 .theme-switch {
   display: flex;
   align-items: center;

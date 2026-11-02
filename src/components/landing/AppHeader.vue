@@ -3,7 +3,7 @@
     <ion-toolbar>
       <div class="header-inner">
         <a class="brand" href="#home" aria-label="Harbor Dental home" @click="closeMenu">
-          <span class="brand-mark"><ion-icon :icon="sparklesOutline" /></span>
+          <img class="brand-mark" :src="'/logo.png'" alt="" />
           <span class="brand-copy">
             <strong>harbor<span> dental</span></strong>
             <small>CARE THAT FEELS DIFFERENT</small>
@@ -28,7 +28,6 @@
           <a href="#contact" @click="closeMenu">Contact</a>
           <div class="navigation-actions">
             <ThemeToggle icon-only />
-            <ion-button fill="clear" class="login-button" router-link="/login" @click="closeMenu">Sign in</ion-button>
             <ion-button class="header-cta" router-link="/patient/appointments" @click="closeMenu">
               Book a visit
               <ion-icon slot="end" :icon="arrowForwardOutline" />
@@ -48,7 +47,6 @@ import {
   arrowForwardOutline,
   closeOutline,
   menuOutline,
-  sparklesOutline,
 } from 'ionicons/icons'
 
 const menuOpen = ref(false)
@@ -92,13 +90,9 @@ ion-toolbar {
 .brand-mark {
   width: 42px;
   height: 42px;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  background: var(--clinic-blue);
-  border-radius: 15px;
-  font-size: 21px;
-  transform: rotate(-5deg);
+  display: block;
+  border-radius: 12px;
+  object-fit: cover;
 }
 
 .brand-copy {
@@ -148,12 +142,6 @@ ion-toolbar {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.login-button {
-  --color: var(--clinic-ink);
-  font-size: 13px;
-  font-weight: 700;
 }
 
 .header-cta {

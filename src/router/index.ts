@@ -134,9 +134,10 @@ const routes: RouteRecordRaw[] = [
     children: [
       ['dashboard', 'PatientDashboardPage', 'My Dashboard'],
       ['appointments', 'PatientAppointmentsPage', 'Book an Appointment'],
-      ['treatments', 'PatientTreatmentsPage', 'Treatment History'],
+      ['treatments', 'PatientTreatmentsPage', 'Treatments'],
       ['dental-chart', 'PatientChartPage', 'My Dental Chart'],
       ['payments', 'PatientPaymentsPage', 'Payment History'],
+      ['braces', 'PatientBracesPage', 'Try On Braces'],
       ['notifications', 'PatientNotificationsPage', 'Notifications'],
     ].map(([path, file, title]) => ({
       path,

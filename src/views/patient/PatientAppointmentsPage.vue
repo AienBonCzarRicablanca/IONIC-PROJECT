@@ -4,7 +4,7 @@
       <ion-toolbar>
         <ion-buttons slot="start"><ion-menu-button menu="app-menu" aria-label="Open menu" /></ion-buttons>
         <ion-title>Book an Appointment</ion-title>
-        <ion-buttons slot="end"><NotificationButton /></ion-buttons>
+        <ion-buttons slot="end"><HeaderTools notifications /></ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -72,7 +72,7 @@ import {
   IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonPage, IonSelect, IonSelectOption,
   IonTextarea, IonTitle, IonToast, IonToolbar,
 } from '@ionic/vue'
-import NotificationButton from '../../components/common/NotificationButton.vue'
+import HeaderTools from '../../components/common/HeaderTools.vue'
 import { useMyPatient } from '../../composables/useMyPatient'
 import * as portal from '../../services/portal.service'
 

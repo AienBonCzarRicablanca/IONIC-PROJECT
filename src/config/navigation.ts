@@ -7,6 +7,7 @@ import {
   calendarNumberOutline,
   cubeOutline,
   gridOutline,
+  happyOutline,
   imageOutline,
   listOutline,
   mailOutline,
@@ -39,6 +40,7 @@ export const NAV_ITEMS: Record<UserRole, NavItem[]> = {
     { label: 'Treatments', path: '/patient/treatments', icon: medkitOutline },
     { label: 'Dental Chart', path: '/patient/dental-chart', icon: bodyOutline },
     { label: 'Payments', path: '/patient/payments', icon: cardOutline },
+    { label: 'Try Braces', path: '/patient/braces', icon: happyOutline },
   ],
   superadmin: [
     { label: 'Dashboard', path: '/superadmin/dashboard', icon: gridOutline },

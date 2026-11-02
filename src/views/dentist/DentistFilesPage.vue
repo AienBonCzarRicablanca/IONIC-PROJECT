@@ -6,6 +6,7 @@
           <ion-menu-button menu="app-menu" aria-label="Open menu" />
         </ion-buttons>
         <ion-title>Digital X-Rays</ion-title>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
 
@@ -96,6 +97,7 @@ import {
   IonToast,
   IonToolbar,
 } from '@ionic/vue'
+import HeaderTools from '../../components/common/HeaderTools.vue'
 import { useAuth } from '../../composables/useAuth'
 import { listAssignedPatients } from '../../services/clinical.service'
 import { getSignedUrl, listFiles, type PatientFile, uploadFile, validateFile } from '../../services/files.service'
