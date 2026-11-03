@@ -35,3 +35,8 @@ npm-debug.log*
 /platforms
 /plugins
 /www
+
+# Android signing key. Never commit this.
+*.keystore
+*.jks
+android/keystore.local.properties

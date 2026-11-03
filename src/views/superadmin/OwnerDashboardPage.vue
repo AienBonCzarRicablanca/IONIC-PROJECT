@@ -8,47 +8,69 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <div class="page">
-        <PageAction :icon="refreshOutline" :disabled="loading" @click="load">Refresh</PageAction>
+      <div class="dash-page">
+        <DashHero
+          :name="profile?.fullName || ''"
+          role="Clinic owner"
+          :summary="summaryLine"
+          :refreshing="loading"
+          @refresh="load"
+        />
+
         <div v-if="loading && !summary" class="state-message" role="status">
           <div class="load-bars" aria-hidden="true">
             <ion-skeleton-text animated />
             <ion-skeleton-text animated />
             <ion-skeleton-text animated />
           </div>
-          Loading dashboard...
+          Loading the clinic…
         </div>
         <div v-else-if="loadError" class="state-message error-message" role="alert">{{ loadError }}</div>
 
         <template v-if="summary">
-          <div class="stat-grid">
-            <router-link class="stat" to="/superadmin/patients">
-              <span class="stat-value">{{ summary.totalPatients }}</span><span>Total patients</span>
+          <div class="dash-facts">
+            <router-link class="dash-fact" to="/superadmin/analytics">
+              <span>Collected this month</span>
+              <strong>{{ peso(summary.revenueThisMonth) }}</strong>
             </router-link>
-            <router-link class="stat" to="/superadmin/staff">
-              <span class="stat-value">{{ summary.activeStaff }}</span><span>Active staff</span>
-            </router-link>
-            <router-link class="stat" to="/superadmin/appointments">
-              <span class="stat-value">{{ summary.todayAppointments }}</span><span>Appointments today</span>
-            </router-link>
-            <router-link class="stat" to="/superadmin/billing">
-              <span class="stat-value">{{ peso(summary.outstandingBalance) }}</span><span>Outstanding balance</span>
-            </router-link>
-            <router-link class="stat" to="/superadmin/billing">
-              <span class="stat-value">{{ summary.openInvoices }}</span><span>Open invoices</span>
-            </router-link>
-            <router-link class="stat" to="/superadmin/inventory">
-              <span class="stat-value">{{ summary.lowStockCount }}</span><span>Low-stock items</span>
+            <router-link class="dash-fact" to="/superadmin/appointments">
+              <span>Still pending</span>
+              <strong>{{ summary.pendingAppointments }}</strong>
             </router-link>
           </div>
 
-          <ion-card>
-            <ion-card-header><ion-card-title>Key operations</ion-card-title></ion-card-header>
-            <ion-card-content>
-              <p><strong>Pending appointments:</strong> {{ summary.pendingAppointments }}</p>
-              <p><strong>Revenue this month:</strong> {{ peso(summary.revenueThisMonth) }}</p>
-            </ion-card-content>
-          </ion-card>
+          <div class="stat-grid">
+            <router-link class="stat" to="/superadmin/patients">
+              <ion-icon :icon="peopleOutline" />
+              <span class="stat-value">{{ summary.totalPatients }}</span>
+              <span>Patients</span>
+            </router-link>
+            <router-link class="stat" to="/superadmin/staff">
+              <ion-icon :icon="shieldCheckmarkOutline" />
+              <span class="stat-value">{{ summary.activeStaff }}</span>
+              <span>Active staff</span>
+            </router-link>
+            <router-link class="stat" to="/superadmin/appointments">
+              <ion-icon :icon="calendarOutline" />
+              <span class="stat-value">{{ summary.todayAppointments }}</span>
+              <span>Visits today</span>
+            </router-link>
+            <router-link class="stat" to="/superadmin/billing">
+              <ion-icon :icon="cashOutline" />
+              <span class="stat-value">{{ peso(summary.outstandingBalance) }}</span>
+              <span>Still to collect</span>
+            </router-link>
+            <router-link class="stat" to="/superadmin/billing">
+              <ion-icon :icon="receiptOutline" />
+              <span class="stat-value">{{ summary.openInvoices }}</span>
+              <span>Open invoices</span>
+            </router-link>
+            <router-link class="stat" to="/superadmin/inventory">
+              <ion-icon :icon="cubeOutline" />
+              <span class="stat-value">{{ summary.lowStockCount }}</span>
+              <span>Low-stock items</span>
+            </router-link>
+          </div>
         </template>
       </div>
     </ion-content>
@@ -56,24 +78,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
-  IonButtons,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonContent,
-  IonHeader,
-  IonMenuButton,
-  IonPage,
-  IonSkeletonText,
-  IonTitle,
-  IonToolbar,
+  IonButtons, IonContent, IonHeader, IonIcon, IonMenuButton, IonPage, IonSkeletonText, IonTitle, IonToolbar,
 } from '@ionic/vue'
-import { refreshOutline } from 'ionicons/icons'
+import {
+  calendarOutline, cashOutline, cubeOutline, peopleOutline, receiptOutline, shieldCheckmarkOutline,
+} from 'ionicons/icons'
+import DashHero from '../../components/common/DashHero.vue'
 import HeaderTools from '../../components/common/HeaderTools.vue'
-import PageAction from '../../components/common/PageAction.vue'
 import { useAuth } from '../../composables/useAuth'
 import { getOwnerDashboard, type OwnerDashboardSummary } from '../../services/owner.service'
 
@@ -82,6 +95,11 @@ const summary = ref<OwnerDashboardSummary | null>(null)
 const loading = ref(false)
 const loadError = ref('')
 const peso = (value: number) => new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value)
+
+const summaryLine = computed(() => {
+  if (!summary.value) return 'Checking patients, staff, and this month’s collections.'
+  return `${peso(summary.value.revenueThisMonth)} collected this month, with ${summary.value.todayAppointments} visits on today’s book.`
+})
 
 async function load() {
   const clinicId = profile.value?.clinicId
@@ -101,7 +119,8 @@ watch(() => profile.value?.clinicId, () => void load(), { immediate: true })
 </script>
 
 <style scoped>
-.page { margin: 0 auto; max-width: 1080px; padding: 4px 2px 12px; }
 .state-message { padding: 1.25rem 1rem; text-align: center; }
 .error-message { color: var(--ion-color-danger); }
+.dash-facts { margin-bottom: 14px; }
+.dash-fact { text-decoration: none; }
 </style>

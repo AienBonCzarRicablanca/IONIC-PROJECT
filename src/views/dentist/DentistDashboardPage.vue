@@ -2,56 +2,76 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button menu="app-menu" aria-label="Open menu" />
-        </ion-buttons>
+        <ion-buttons slot="start"><ion-menu-button menu="app-menu" aria-label="Open menu" /></ion-buttons>
         <ion-title>Dentist Dashboard</ion-title>
         <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
-
     <ion-content>
       <div class="dash-page">
-        <PageAction :icon="refreshOutline" :disabled="loading" @click="load">Refresh</PageAction>
+        <DashHero
+          :name="profile?.fullName || ''"
+          role="Dentist"
+          :summary="summaryLine"
+          :refreshing="loading"
+          @refresh="load"
+        />
+
         <div v-if="loading && !loaded" class="state-message" role="status">
           <div class="load-bars" aria-hidden="true">
             <ion-skeleton-text animated />
             <ion-skeleton-text animated />
             <ion-skeleton-text animated />
           </div>
-          Loading...
+          Loading your day…
         </div>
         <div v-else-if="loadError" class="state-message error-message" role="alert">{{ loadError }}</div>
 
         <template v-if="loaded">
-          <ion-card>
-            <ion-card-header><ion-card-title>Current queue</ion-card-title></ion-card-header>
-            <ion-card-content>
-              <p v-if="!queue.length" class="state-message">Nobody waiting for you.</p>
-              <ion-list v-else lines="full">
-                <ion-item v-for="entry in queue" :key="entry.id" :detail="false">
-                  <UserAvatar
-                    slot="start"
-                    :name="entry.appointments?.patients?.full_name ?? 'Patient'"
-                    :path="avatars.pathFor(entry.appointments?.patients?.profile_id)"
-                  />
-                  <ion-chip :color="entry.status === 'in_session' ? 'primary' : 'warning'">
-                    #{{ entry.queue_number }}
-                  </ion-chip>
-                  <ion-label>
-                    <h2>{{ entry.appointments?.patients?.full_name ?? 'Patient' }}</h2>
-                    <p>{{ entry.status === 'in_session' ? 'In session' : 'Waiting' }}</p>
-                  </ion-label>
-                </ion-item>
-              </ion-list>
-            </ion-card-content>
-          </ion-card>
+          <div class="stat-grid">
+            <router-link class="stat" to="/dentist/calendar">
+              <ion-icon :icon="calendarNumberOutline" />
+              <span class="stat-value">{{ today.length }}</span>
+              <span>Visits today</span>
+            </router-link>
+            <router-link class="stat" to="/dentist/patients">
+              <ion-icon :icon="hourglassOutline" />
+              <span class="stat-value">{{ waiting }}</span>
+              <span>Waiting</span>
+            </router-link>
+            <router-link class="stat" to="/dentist/patients">
+              <ion-icon :icon="medkitOutline" />
+              <span class="stat-value">{{ inSession }}</span>
+              <span>In session</span>
+            </router-link>
+          </div>
 
-          <ion-card>
-            <ion-card-header><ion-card-title>Today's appointments</ion-card-title></ion-card-header>
-            <ion-card-content>
-              <p v-if="!today.length" class="state-message">No appointments today.</p>
-              <ion-list v-else lines="full">
+          <div class="dash-split">
+            <section class="dash-panel">
+              <h3>Up next</h3>
+              <p v-if="!nextUp" class="dash-empty">Nobody is waiting for you right now.</p>
+              <div v-else class="person-line">
+                <UserAvatar
+                  :name="nextUp.appointments?.patients?.full_name ?? 'Patient'"
+                  :path="avatars.pathFor(nextUp.appointments?.patients?.profile_id)"
+                />
+                <div>
+                  <p class="dash-visit-time">{{ nextUp.appointments?.patients?.full_name ?? 'Patient' }}</p>
+                  <p class="dash-visit-meta">
+                    Queue #{{ nextUp.queue_number }} · {{ nextUp.status === 'in_session' ? 'In the chair' : 'Waiting' }}
+                  </p>
+                </div>
+              </div>
+              <p v-if="queue.length > 1" class="dash-visit-meta">{{ queue.length - 1 }} more in your queue.</p>
+            </section>
+
+            <section class="dash-panel">
+              <h3>Today</h3>
+              <p v-if="!today.length" class="dash-empty">
+                No appointments on your calendar.
+                <router-link to="/dentist/calendar">Open the calendar</router-link>.
+              </p>
+              <ion-list v-else lines="none">
                 <ion-item
                   v-for="appt in today"
                   :key="appt.id"
@@ -66,13 +86,12 @@
                   />
                   <ion-label>
                     <h2>{{ timeFmt.format(new Date(appt.starts_at)) }} · {{ appt.patients?.full_name }}</h2>
-                    <p>{{ appt.services?.name }}</p>
+                    <p>{{ appt.services?.name || 'Appointment' }} · {{ appt.status.replaceAll('_', ' ') }}</p>
                   </ion-label>
-                  <ion-chip>{{ appt.status }}</ion-chip>
                 </ion-item>
               </ion-list>
-            </ion-card-content>
-          </ion-card>
+            </section>
+          </div>
         </template>
       </div>
     </ion-content>
@@ -80,28 +99,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
-  IonButtons,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonChip,
-  IonContent,
-  IonHeader,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonMenuButton,
-  IonPage,
-  IonSkeletonText,
-  IonTitle,
-  IonToolbar,
+  IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList,
+  IonMenuButton, IonPage, IonSkeletonText, IonTitle, IonToolbar,
 } from '@ionic/vue'
-import { refreshOutline } from 'ionicons/icons'
+import { calendarNumberOutline, hourglassOutline, medkitOutline } from 'ionicons/icons'
+import DashHero from '../../components/common/DashHero.vue'
 import HeaderTools from '../../components/common/HeaderTools.vue'
-import PageAction from '../../components/common/PageAction.vue'
 import UserAvatar from '../../components/common/UserAvatar.vue'
 import { useAuth } from '../../composables/useAuth'
 import { useAvatarPaths } from '../../composables/useAvatarPaths'
@@ -123,6 +128,15 @@ const loading = ref(false)
 const loaded = ref(false)
 const loadError = ref('')
 const timeFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' })
+
+const waiting = computed(() => queue.value.filter((entry) => entry.status !== 'in_session').length)
+const inSession = computed(() => queue.value.filter((entry) => entry.status === 'in_session').length)
+const nextUp = computed(() => queue.value.find((entry) => entry.status === 'in_session') ?? queue.value[0] ?? null)
+const summaryLine = computed(() => {
+  if (!loaded.value) return 'Checking your queue and today’s appointments.'
+  if (!today.value.length && !queue.value.length) return 'Your chair is clear today.'
+  return `${today.value.length} visits on your list, with ${waiting.value} waiting and ${inSession.value} already in session.`
+})
 
 async function load() {
   const clinicId = profile.value?.clinicId
@@ -152,18 +166,6 @@ watch(() => profile.value?.clinicId, () => void load(), { immediate: true })
 </script>
 
 <style scoped>
-.dash-page {
-  margin: 0 auto;
-  max-width: 900px;
-  padding: 0.5rem;
-}
-
-.state-message {
-  padding: 1rem;
-  text-align: center;
-}
-
-.error-message {
-  color: var(--ion-color-danger);
-}
+.state-message { padding: 1.25rem 1rem; text-align: center; }
+.error-message { color: var(--ion-color-danger); }
 </style>

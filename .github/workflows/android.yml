@@ -5,8 +5,11 @@ on:
   push:
     branches: [main, master]
 
+permissions:
+  contents: write
+
 jobs:
-  debug-apk:
+  release-apk:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
@@ -31,6 +34,19 @@ jobs:
             exit 1
           fi
 
+      - name: Require the Android signing key
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEYSTORE_PASSWORD" ] || [ -z "$ANDROID_KEY_ALIAS" ] || [ -z "$ANDROID_KEY_PASSWORD" ]; then
+            echo "Add ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, and ANDROID_KEY_PASSWORD under GitHub Actions secrets."
+            echo "Use the same keystore for every build so phones can install the update over the current app."
+            exit 1
+          fi
+
       - name: Build the web app
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
@@ -46,13 +62,42 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Build a debug APK
+      - name: Restore the signing key
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: echo "$ANDROID_KEYSTORE_BASE64" | tr -d '\n\r' | base64 -d > android/app/harbor-release.keystore
+
+      - name: Build a signed release APK
         working-directory: android
-        run: chmod +x ./gradlew && ./gradlew assembleDebug --no-daemon
+        env:
+          RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleRelease --no-daemon \
+            -PVERSION_CODE=${{ github.run_number }} \
+            -PVERSION_NAME=1.${{ github.run_number }} \
+            -PRELEASE_STORE_FILE=harbor-release.keystore \
+            -PRELEASE_STORE_PASSWORD="$RELEASE_STORE_PASSWORD" \
+            -PRELEASE_KEY_ALIAS="$RELEASE_KEY_ALIAS" \
+            -PRELEASE_KEY_PASSWORD="$RELEASE_KEY_PASSWORD"
+          cp app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/harbor-dental.apk
 
       - name: Upload the APK
         uses: actions/upload-artifact@v4
         with:
-          name: harbor-dental-debug
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: harbor-dental
+          path: android/app/build/outputs/apk/release/harbor-dental.apk
           if-no-files-found: error
+
+      - name: Publish the APK release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Harbor Dental ${{ github.run_number }}
+          files: android/app/build/outputs/apk/release/harbor-dental.apk
+          generate_release_notes: true
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
