@@ -535,6 +535,7 @@ export type Database = {
           clinic_id: string
           created_at: string
           id: string
+          image_path: string | null
           is_archived: boolean
           name: string
           quantity: number
@@ -549,6 +550,7 @@ export type Database = {
           clinic_id: string
           created_at?: string
           id?: string
+          image_path?: string | null
           is_archived?: boolean
           name: string
           quantity?: number
@@ -563,6 +565,7 @@ export type Database = {
           clinic_id?: string
           created_at?: string
           id?: string
+          image_path?: string | null
           is_archived?: boolean
           name?: string
           quantity?: number

@@ -17,7 +17,12 @@ export type InventoryItemInput = {
   supplier: string | null
   unit_cost: number
   reorder_threshold: number
+  image_path: string | null
 }
+
+const IMAGE_BUCKET = 'inventory-images'
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024
 
 export type StockAction = 'addition' | 'consumption'
 
@@ -70,12 +75,44 @@ export async function updateItem(clinicId: string, id: string, input: InventoryI
   }
 }
 
-export async function archiveItem(clinicId: string, id: string) {
+export async function archiveItem(clinicId: string, id: string, imagePath: string | null) {
   const { error } = await supabase
     .from('inventory_items')
     .update({ is_archived: true })
     .eq('clinic_id', clinicId)
     .eq('id', id)
+  if (error) throw new Error(error.message)
+  if (!imagePath) return
+  try {
+    await removeInventoryImage(imagePath)
+  } catch {
+    // The item is already archived. A leftover photo does not block the archive.
+  }
+}
+
+export async function inventoryImageUrl(path: string | null) {
+  if (!path) return null
+  const { data, error } = await supabase.storage.from(IMAGE_BUCKET).createSignedUrl(path, 3600)
+  if (error) return null
+  return data.signedUrl
+}
+
+export async function uploadInventoryImage(clinicId: string, file: File) {
+  if (!IMAGE_TYPES.includes(file.type)) throw new Error('Choose a JPG, PNG, or WebP image.')
+  if (file.size < 1 || file.size > MAX_IMAGE_BYTES) {
+    throw new Error('Item photos must be smaller than 2 MB.')
+  }
+  const extension = file.type === 'image/jpeg' ? 'jpg' : file.type.split('/')[1]
+  const path = `${clinicId}/${crypto.randomUUID()}.${extension}`
+  const { error } = await supabase.storage
+    .from(IMAGE_BUCKET)
+    .upload(path, file, { contentType: file.type, upsert: false })
+  if (error) throw new Error(error.message)
+  return path
+}
+
+export async function removeInventoryImage(path: string) {
+  const { error } = await supabase.storage.from(IMAGE_BUCKET).remove([path])
   if (error) throw new Error(error.message)
 }
 

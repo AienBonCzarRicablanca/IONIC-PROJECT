@@ -19,15 +19,74 @@
           </ion-card-content>
         </ion-card>
 
-        <ion-searchbar v-model="search" aria-label="Search inventory" placeholder="Search items" />
+        <div class="inv-search">
+          <ion-searchbar v-model="search" aria-label="Search inventory" placeholder="Search name, category, or supplier" />
+          <button
+            type="button"
+            class="inv-filter"
+            :class="{ active: filtersActive }"
+            aria-label="Filter inventory"
+            @click="openFilters"
+          >
+            <ion-icon :icon="funnelOutline" aria-hidden="true" />
+          </button>
+          <ion-popover
+            class="inv-filter-popover"
+            :is-open="filterOpen"
+            :event="filterEvent"
+            reference="event"
+            side="bottom"
+            alignment="end"
+            @didDismiss="filterOpen = false"
+          >
+            <div class="filter-panel">
+              <section class="filter-col">
+                <p class="filter-label">Category</p>
+                <div class="filter-scroll">
+                  <button type="button" :class="{ selected: categoryFilter === 'all' }" @click="categoryFilter = 'all'">
+                    All categories
+                  </button>
+                  <button type="button" :class="{ selected: categoryFilter === 'none' }" @click="categoryFilter = 'none'">
+                    No category
+                  </button>
+                  <button
+                    v-for="category in filterCategories"
+                    :key="category"
+                    type="button"
+                    :class="{ selected: categoryFilter === category }"
+                    @click="categoryFilter = category"
+                  >
+                    {{ category }}
+                  </button>
+                </div>
+              </section>
+              <section class="filter-col filter-stock">
+                <p class="filter-label">Stock</p>
+                <button type="button" :class="{ selected: stockFilter === 'all' }" @click="stockFilter = 'all'">All stock</button>
+                <button type="button" :class="{ selected: stockFilter === 'low' }" @click="stockFilter = 'low'">Low stock</button>
+                <button type="button" :class="{ selected: stockFilter === 'ok' }" @click="stockFilter = 'ok'">In stock</button>
+              </section>
+            </div>
+          </ion-popover>
+        </div>
+        <button v-if="filtersActive" type="button" class="filter-summary" @click="clearFilters">
+          {{ filterSummary }}
+          <ion-icon :icon="closeOutline" aria-hidden="true" />
+        </button>
 
         <div v-if="loading" class="state-message" role="status">Loading inventory...</div>
         <div v-else-if="loadError" class="state-message error-message" role="alert">
           {{ loadError }}
         </div>
-        <p v-else-if="!visible.length" class="state-message">No inventory items.</p>
+        <p v-else-if="!visible.length" class="state-message">
+          {{ items.length ? 'No items match this search.' : 'No inventory items.' }}
+        </p>
         <ion-list v-else lines="full">
           <ion-item v-for="item in visible" :key="item.id" :detail="false">
+            <div class="inv-thumb" slot="start" aria-hidden="true">
+              <img v-if="imageUrls[item.id]" :src="imageUrls[item.id]" alt="" />
+              <ion-icon v-else :icon="cubeOutline" />
+            </div>
             <ion-label class="ion-text-wrap">
               <h2>{{ item.name }}</h2>
               <p>
@@ -55,15 +114,60 @@
         </ion-header>
         <ion-content>
           <form class="form" @submit.prevent="saveItem">
+            <div class="photo-field">
+              <div class="photo-preview" aria-hidden="true">
+                <img v-if="previewUrl" :src="previewUrl" alt="" />
+                <ion-icon v-else :icon="imageOutline" />
+              </div>
+              <div>
+                <p class="hint">JPG, PNG, or WebP · maximum 2 MB</p>
+                <input
+                  ref="fileInput"
+                  class="file-input"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  @change="onPhoto"
+                />
+                <div class="photo-actions">
+                  <ion-button type="button" fill="outline" size="small" :disabled="saving" @click="fileInput?.click()">
+                    {{ previewUrl ? 'Change photo' : 'Add photo' }}
+                  </ion-button>
+                  <ion-button v-if="previewUrl" type="button" fill="clear" size="small" color="medium" :disabled="saving" @click="clearPhoto">
+                    Remove photo
+                  </ion-button>
+                </div>
+              </div>
+            </div>
             <ion-input v-model="form.name" label="Name" label-placement="stacked" fill="outline" required />
-            <ion-input v-model="form.category" label="Category" label-placement="stacked" fill="outline" />
+            <ion-select
+              v-model="categoryChoice"
+              label="Category"
+              label-placement="stacked"
+              fill="outline"
+              interface="popover"
+            >
+              <ion-select-option value="none">No category</ion-select-option>
+              <ion-select-option v-for="category in INVENTORY_CATEGORIES" :key="category" :value="category">
+                {{ category }}
+              </ion-select-option>
+              <ion-select-option :value="OTHER_CATEGORY">Other</ion-select-option>
+            </ion-select>
+            <ion-input
+              v-if="categoryChoice === OTHER_CATEGORY"
+              v-model="customCategory"
+              label="Other category"
+              label-placement="stacked"
+              fill="outline"
+              placeholder="Type the category"
+              required
+            />
             <ion-input v-model="form.unit" label="Unit (e.g. box, pcs)" label-placement="stacked" fill="outline" required />
             <ion-input v-model="form.supplier" label="Supplier" label-placement="stacked" fill="outline" />
             <ion-input v-model="unitCost" label="Unit cost (PHP)" label-placement="stacked" fill="outline" type="number" min="0" step="0.01" />
             <ion-input v-model="threshold" label="Reorder threshold" label-placement="stacked" fill="outline" type="number" min="0" />
             <p v-if="formError" class="error-message" role="alert">{{ formError }}</p>
             <ion-button expand="block" type="submit" :disabled="saving">Save item</ion-button>
-            <ion-button v-if="editingId" expand="block" fill="outline" color="danger" :disabled="saving" @click="archive">
+            <ion-button v-if="editingId" type="button" expand="block" fill="outline" color="danger" :disabled="saving" @click="archive">
               Archive item
             </ion-button>
           </form>
@@ -133,7 +237,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onUnmounted, reactive, ref, watch } from 'vue'
 import {
   IonButton,
   IonButtons,
@@ -142,6 +246,7 @@ import {
   IonChip,
   IonContent,
   IonHeader,
+  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -149,6 +254,7 @@ import {
   IonMenuButton,
   IonModal,
   IonPage,
+  IonPopover,
   IonSearchbar,
   IonSelect,
   IonSelectOption,
@@ -156,26 +262,35 @@ import {
   IonToast,
   IonToolbar,
 } from '@ionic/vue'
-import { addOutline } from 'ionicons/icons'
+import { addOutline, closeOutline, cubeOutline, funnelOutline, imageOutline } from 'ionicons/icons'
 import HeaderTools from '../../components/common/HeaderTools.vue'
 import PageAction from '../../components/common/PageAction.vue'
+import { INVENTORY_CATEGORIES, OTHER_CATEGORY, isPresetCategory } from '../../content/inventoryCategories'
 import { useAuth } from '../../composables/useAuth'
 import {
   archiveItem,
   createItem,
+  inventoryImageUrl,
   type InventoryItem,
   type InventoryTransaction,
   isLowStock,
   listInventory,
   listItemTransactions,
   recordStockChange,
+  removeInventoryImage,
   type StockAction,
   updateItem,
+  uploadInventoryImage,
 } from '../../services/inventory.service'
 
 const { profile } = useAuth()
 const items = ref<InventoryItem[]>([])
+const imageUrls = ref<Record<string, string>>({})
 const search = ref('')
+const categoryFilter = ref('all')
+const stockFilter = ref<'all' | 'low' | 'ok'>('all')
+const filterOpen = ref(false)
+const filterEvent = ref<Event | undefined>()
 const loading = ref(false)
 const saving = ref(false)
 const loadError = ref('')
@@ -198,16 +313,59 @@ const toastOpen = ref(false)
 const toastMessage = ref('')
 const form = reactive({
   name: '',
-  category: '' as string | null,
   unit: 'pcs',
   supplier: '' as string | null,
 })
+const categoryChoice = ref('none')
+const customCategory = ref('')
+const existingImagePath = ref<string | null>(null)
+const pendingImage = ref<File | null>(null)
+const removeImage = ref(false)
+const previewUrl = ref<string | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
+let previewIsBlob = false
+let imageRequest = 0
 
 const lowStock = computed(() => items.value.filter(isLowStock))
+const filtersActive = computed(() => categoryFilter.value !== 'all' || stockFilter.value !== 'all')
+const filterSummary = computed(() => {
+  const parts: string[] = []
+  if (categoryFilter.value === 'none') parts.push('No category')
+  else if (categoryFilter.value !== 'all') parts.push(categoryFilter.value)
+  if (stockFilter.value === 'low') parts.push('Low stock')
+  if (stockFilter.value === 'ok') parts.push('In stock')
+  return parts.join(' · ')
+})
+const filterCategories = computed(() => {
+  const extras = items.value
+    .map((item) => item.category)
+    .filter((category): category is string => typeof category === 'string' && !isPresetCategory(category))
+  return [...INVENTORY_CATEGORIES, ...new Set(extras)]
+})
 const visible = computed(() => {
   const term = search.value.trim().toLowerCase()
-  return term ? items.value.filter((item) => item.name.toLowerCase().includes(term)) : items.value
+  return items.value.filter((item) => {
+    const haystack = [item.name, item.category, item.supplier, item.unit].filter(Boolean).join(' ').toLowerCase()
+    const matchesTerm = !term || haystack.includes(term)
+    const matchesCategory =
+      categoryFilter.value === 'all' ||
+      (categoryFilter.value === 'none' ? !item.category : item.category === categoryFilter.value)
+    const matchesStock =
+      stockFilter.value === 'all' ||
+      (stockFilter.value === 'low' ? isLowStock(item) : !isLowStock(item))
+    return matchesTerm && matchesCategory && matchesStock
+  })
 })
+
+function openFilters(event: Event) {
+  filterEvent.value = event
+  filterOpen.value = true
+}
+
+function clearFilters() {
+  categoryFilter.value = 'all'
+  stockFilter.value = 'all'
+}
 
 function showToast(message: string) {
   toastMessage.value = message
@@ -221,6 +379,7 @@ async function load() {
   loadError.value = ''
   try {
     items.value = await listInventory(clinicId)
+    void loadImageUrls(items.value)
   } catch (error) {
     loadError.value = error instanceof Error ? error.message : 'Could not load inventory.'
   } finally {
@@ -230,26 +389,111 @@ async function load() {
 
 watch(() => profile.value?.clinicId, () => void load(), { immediate: true })
 
+onUnmounted(() => {
+  if (previewIsBlob && previewUrl.value) URL.revokeObjectURL(previewUrl.value)
+})
+
+function setPreview(url: string | null, blob: boolean) {
+  if (previewIsBlob && previewUrl.value) URL.revokeObjectURL(previewUrl.value)
+  previewUrl.value = url
+  previewIsBlob = blob
+}
+
+function resetPhoto() {
+  pendingImage.value = null
+  removeImage.value = false
+  existingImagePath.value = null
+  setPreview(null, false)
+  if (fileInput.value) fileInput.value.value = ''
+}
+
+function applyCategory(category: string | null) {
+  if (category && isPresetCategory(category)) {
+    categoryChoice.value = category
+    customCategory.value = ''
+    return
+  }
+  if (category) {
+    categoryChoice.value = OTHER_CATEGORY
+    customCategory.value = category
+    return
+  }
+  categoryChoice.value = 'none'
+  customCategory.value = ''
+}
+
+function chosenCategory() {
+  if (categoryChoice.value === OTHER_CATEGORY) {
+    const custom = customCategory.value.trim()
+    if (!custom) throw new Error('Type the category name.')
+    return custom
+  }
+  if (!categoryChoice.value || categoryChoice.value === 'none') return null
+  return categoryChoice.value.trim()
+}
+
+function onPhoto(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  const allowed = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp'
+  if (!allowed || file.size > 2 * 1024 * 1024) {
+    formError.value = 'Choose a JPG, PNG, or WebP image under 2 MB.'
+    if (fileInput.value) fileInput.value.value = ''
+    return
+  }
+  formError.value = ''
+  pendingImage.value = file
+  removeImage.value = false
+  setPreview(URL.createObjectURL(file), true)
+}
+
+function clearPhoto() {
+  pendingImage.value = null
+  removeImage.value = true
+  setPreview(null, false)
+  if (fileInput.value) fileInput.value.value = ''
+}
+
+async function loadImageUrls(list: InventoryItem[]) {
+  const request = ++imageRequest
+  const urls: Record<string, string> = {}
+  await Promise.all(
+    list.map(async (item) => {
+      if (!item.image_path) return
+      const url = await inventoryImageUrl(item.image_path)
+      if (url) urls[item.id] = url
+    }),
+  )
+  if (request === imageRequest) imageUrls.value = urls
+}
+
 function openNew() {
   editingId.value = null
   formError.value = ''
-  Object.assign(form, { name: '', category: '', unit: 'pcs', supplier: '' })
+  Object.assign(form, { name: '', unit: 'pcs', supplier: '' })
+  applyCategory(null)
+  resetPhoto()
   unitCost.value = '0'
   threshold.value = '0'
   itemOpen.value = true
 }
 
-function openEdit(item: InventoryItem) {
+async function openEdit(item: InventoryItem) {
   editingId.value = item.id
   formError.value = ''
   Object.assign(form, {
     name: item.name,
-    category: item.category ?? '',
     unit: item.unit,
     supplier: item.supplier ?? '',
   })
+  applyCategory(item.category)
   unitCost.value = String(item.unit_cost)
   threshold.value = String(item.reorder_threshold)
+  pendingImage.value = null
+  removeImage.value = false
+  existingImagePath.value = item.image_path
+  setPreview(item.image_path ? await inventoryImageUrl(item.image_path) : null, false)
+  if (fileInput.value) fileInput.value.value = ''
   itemOpen.value = true
 }
 
@@ -310,7 +554,10 @@ async function guarded(action: (clinicId: string) => Promise<void>, success: str
     showToast(success)
     await load()
   } catch (error) {
-    formError.value = error instanceof Error ? error.message : 'Action failed.'
+    const message = error instanceof Error ? error.message : 'Action failed.'
+    formError.value = /image_path|inventory-images|Bucket not found/i.test(message)
+      ? 'Run the inventory image SQL in the Supabase SQL editor, then try again.'
+      : message
   } finally {
     saving.value = false
   }
@@ -323,16 +570,33 @@ const saveItem = () =>
       const reorder = Number(threshold.value)
       if (!form.name.trim() || !form.unit.trim()) throw new Error('Name and unit are required.')
       if (!(cost >= 0) || !(reorder >= 0)) throw new Error('Cost and threshold must be zero or more.')
+      const category = chosenCategory()
+      let imagePath = removeImage.value ? null : existingImagePath.value
+      let uploadedPath: string | null = null
+      if (pendingImage.value) {
+        uploadedPath = await uploadInventoryImage(clinicId, pendingImage.value)
+        imagePath = uploadedPath
+      }
       const input = {
         name: form.name.trim(),
-        category: form.category?.trim() || null,
+        category,
         unit: form.unit.trim(),
         supplier: form.supplier?.trim() || null,
         unit_cost: cost,
         reorder_threshold: reorder,
+        image_path: imagePath,
       }
-      if (editingId.value) await updateItem(clinicId, editingId.value, input)
-      else await createItem(clinicId, input)
+      try {
+        if (editingId.value) await updateItem(clinicId, editingId.value, input)
+        else await createItem(clinicId, input)
+      } catch (error) {
+        if (uploadedPath) await removeInventoryImage(uploadedPath).catch(() => undefined)
+        throw error
+      }
+      const previousPath = existingImagePath.value
+      if (previousPath && previousPath !== imagePath) {
+        await removeInventoryImage(previousPath).catch(() => undefined)
+      }
     },
     'Item saved.',
     () => (itemOpen.value = false),
@@ -340,7 +604,7 @@ const saveItem = () =>
 
 const archive = () =>
   guarded(
-    (clinicId) => archiveItem(clinicId, editingId.value as string),
+    (clinicId) => archiveItem(clinicId, editingId.value as string, existingImagePath.value),
     'Item archived.',
     () => (itemOpen.value = false),
   )
@@ -377,6 +641,169 @@ const saveStock = () =>
   display: grid;
   gap: 0.75rem;
   padding: 1rem;
+}
+
+.inv-search {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.inv-search ion-searchbar {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  --background: transparent;
+  --box-shadow: none;
+}
+
+.inv-filter {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-right: 6px;
+  flex: none;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--clinic-blue);
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+
+.inv-filter.active {
+  background: var(--accent-soft);
+}
+
+.filter-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 2px 0;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--clinic-blue);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.inv-filter-popover {
+  --width: min(440px, 94vw);
+}
+
+.filter-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(124px, 0.85fr);
+  width: min(440px, 94vw);
+  max-height: min(380px, 70vh);
+  padding: 12px;
+}
+
+.filter-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.filter-stock {
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
+}
+
+.filter-scroll {
+  display: grid;
+  gap: 4px;
+  min-height: 0;
+  overflow: auto;
+}
+
+.filter-label {
+  margin: 0 4px 4px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.filter-panel button {
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--clinic-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.filter-panel button.selected {
+  background: var(--accent-soft);
+  color: var(--clinic-blue);
+  font-weight: 700;
+}
+
+.inv-thumb,
+.photo-preview {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--accent-soft);
+  color: var(--clinic-blue);
+}
+
+.inv-thumb {
+  width: 52px;
+  height: 52px;
+  margin-inline-end: 12px;
+  border-radius: 12px;
+  font-size: 1.3rem;
+}
+
+.inv-thumb img,
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-field {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.photo-preview {
+  width: 84px;
+  height: 84px;
+  flex: none;
+  border-radius: 16px;
+  font-size: 1.8rem;
+}
+
+.photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.hint {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.file-input {
+  display: none;
 }
 
 .state-message {
