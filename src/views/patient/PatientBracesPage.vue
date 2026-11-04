@@ -425,6 +425,18 @@ canvas { object-fit: cover; }
 .slider { display: grid; gap: 6px; color: var(--clinic-ink); font-weight: 650; }
 .slider input { width: 100%; accent-color: var(--clinic-blue); }
 .note { margin: 14px 2px 0; font-size: 0.92rem; }
+
+@media (max-width: 800px) {
+  .page { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+  .lead { display: none; }
+  .stage {
+    aspect-ratio: 4 / 3;
+    max-height: 42vh;
+  }
+  .status { margin: 6px 2px 2px; }
+  .stage-actions { margin-top: 6px; }
+  .panel { margin-top: 4px; padding: 12px; }
+}
 .photo-content { --padding-start: 16px; --padding-end: 16px; --padding-top: 16px; }
 .photo-content img { display: block; width: min(100%, 420px); margin: 0 auto 12px; border-radius: var(--radius-lg); }
 .photo-content p { text-align: center; color: var(--muted); }

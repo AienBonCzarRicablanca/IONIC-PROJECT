@@ -86,6 +86,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/admin/MessagesPage.vue'),
         meta: { title: 'Messages', sprint: 'Sprint 1' },
       },
+      {
+        path: 'notifications',
+        name: 'admin-notifications',
+        component: () => import('../views/patient/PatientNotificationsPage.vue'),
+        meta: { title: 'Notifications', sprint: 'Sprint 6' },
+      },
     ],
   },
   {
@@ -123,6 +129,12 @@ const routes: RouteRecordRaw[] = [
         name: 'dentist-x-rays',
         component: () => import('../views/dentist/DentistFilesPage.vue'),
         meta: { title: 'Digital X-Rays', sprint: 'Sprint 5' },
+      },
+      {
+        path: 'notifications',
+        name: 'dentist-notifications',
+        component: () => import('../views/patient/PatientNotificationsPage.vue'),
+        meta: { title: 'Notifications', sprint: 'Sprint 6' },
       },
     ],
   },
@@ -211,6 +223,12 @@ const routes: RouteRecordRaw[] = [
         name: 'superadmin-messages',
         component: () => import('../views/admin/MessagesPage.vue'),
         meta: { title: 'Messages', sprint: 'Sprint 1' },
+      },
+      {
+        path: 'notifications',
+        name: 'superadmin-notifications',
+        component: () => import('../views/patient/PatientNotificationsPage.vue'),
+        meta: { title: 'Notifications', sprint: 'Sprint 6' },
       },
     ],
   },

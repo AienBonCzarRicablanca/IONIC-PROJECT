@@ -13,14 +13,24 @@
     <ion-content>
       <div class="inv-page">
         <PageAction :icon="addOutline" @click="openNew">Add item</PageAction>
-        <ion-card v-if="lowStock.length" color="warning">
-          <ion-card-content role="alert">
-            <strong>Low stock:</strong> {{ lowStock.map((item) => item.name).join(', ') }}
-          </ion-card-content>
-        </ion-card>
+        <div
+          v-if="showLowStock"
+          class="low-stock"
+          role="alert"
+          :style="lowStockStyle"
+          @pointerdown="startLowStockSwipe"
+          @pointermove="moveLowStockSwipe"
+          @pointerup="endLowStockSwipe"
+          @pointercancel="endLowStockSwipe"
+        >
+          <p><strong>Low stock:</strong> {{ lowStock.map((item) => item.name).join(', ') }}</p>
+          <button type="button" aria-label="Dismiss low stock warning" @click="dismissLowStock">
+            <ion-icon :icon="closeOutline" />
+          </button>
+        </div>
 
         <div class="inv-search">
-          <ion-searchbar v-model="search" aria-label="Search inventory" placeholder="Search name, category, or supplier" />
+          <ion-searchbar v-model="search" aria-label="Search inventory" placeholder="Search items" />
           <button
             type="button"
             class="inv-filter"
@@ -81,28 +91,35 @@
         <p v-else-if="!visible.length" class="state-message">
           {{ items.length ? 'No items match this search.' : 'No inventory items.' }}
         </p>
-        <ion-list v-else lines="full">
-          <ion-item v-for="item in visible" :key="item.id" :detail="false">
-            <div class="inv-thumb" slot="start" aria-hidden="true">
-              <img v-if="imageUrls[item.id]" :src="imageUrls[item.id]" alt="" />
-              <ion-icon v-else :icon="cubeOutline" />
+        <div v-else class="inv-list">
+          <article v-for="item in visible" :key="item.id" class="inv-card">
+            <div class="inv-card-main">
+              <div class="inv-thumb" aria-hidden="true">
+                <img v-if="imageUrls[item.id]" :src="imageUrls[item.id]" alt="" />
+                <ion-icon v-else :icon="cubeOutline" />
+              </div>
+              <div class="inv-card-copy">
+                <div class="inv-card-title">
+                  <h2>{{ item.name }}</h2>
+                  <ion-chip :color="isLowStock(item) ? 'warning' : 'success'">
+                    {{ isLowStock(item) ? 'Low' : 'OK' }}
+                  </ion-chip>
+                </div>
+                <p>{{ item.quantity }} {{ item.unit }} · reorder at {{ item.reorder_threshold }}</p>
+                <p v-if="item.category || item.supplier">
+                  <template v-if="item.category">{{ item.category }}</template>
+                  <template v-if="item.category && item.supplier"> · </template>
+                  <template v-if="item.supplier">{{ item.supplier }}</template>
+                </p>
+              </div>
             </div>
-            <ion-label class="ion-text-wrap">
-              <h2>{{ item.name }}</h2>
-              <p>
-                {{ item.quantity }} {{ item.unit }} · reorder at {{ item.reorder_threshold }}
-                <template v-if="item.category"> · {{ item.category }}</template>
-                <template v-if="item.supplier"> · {{ item.supplier }}</template>
-              </p>
-            </ion-label>
-            <ion-chip :color="isLowStock(item) ? 'warning' : 'success'">
-              {{ isLowStock(item) ? 'Low' : 'OK' }}
-            </ion-chip>
-            <ion-button slot="end" size="small" fill="clear" @click="openStock(item)">Stock</ion-button>
-            <ion-button slot="end" size="small" fill="clear" @click="openHistory(item)">History</ion-button>
-            <ion-button slot="end" size="small" fill="clear" @click="openEdit(item)">Edit</ion-button>
-          </ion-item>
-        </ion-list>
+            <div class="inv-card-actions">
+              <button type="button" @click="openStock(item)">Stock</button>
+              <button type="button" @click="openHistory(item)">History</button>
+              <button type="button" @click="openEdit(item)">Edit</button>
+            </div>
+          </article>
+        </div>
       </div>
 
       <ion-modal :is-open="itemOpen" @did-dismiss="itemOpen = false">
@@ -241,8 +258,6 @@ import { computed, onUnmounted, reactive, ref, watch } from 'vue'
 import {
   IonButton,
   IonButtons,
-  IonCard,
-  IonCardContent,
   IonChip,
   IonContent,
   IonHeader,
@@ -327,6 +342,42 @@ let previewIsBlob = false
 let imageRequest = 0
 
 const lowStock = computed(() => items.value.filter(isLowStock))
+const dismissedLowStock = ref('')
+const lowStockKey = computed(() => lowStock.value.map((item) => item.id).join(','))
+const showLowStock = computed(() => lowStock.value.length > 0 && dismissedLowStock.value !== lowStockKey.value)
+const swipeX = ref(0)
+let swipeStart = 0
+let swipeTracking = false
+
+const lowStockStyle = computed(() => ({
+  transform: `translateX(${swipeX.value}px)`,
+  opacity: String(1 - Math.min(Math.abs(swipeX.value) / 220, 0.65)),
+}))
+
+function dismissLowStock() {
+  dismissedLowStock.value = lowStockKey.value
+  swipeX.value = 0
+  swipeTracking = false
+}
+
+function startLowStockSwipe(event: PointerEvent) {
+  if ((event.target as HTMLElement).closest('button')) return
+  swipeTracking = true
+  swipeStart = event.clientX
+  ;(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
+}
+
+function moveLowStockSwipe(event: PointerEvent) {
+  if (!swipeTracking) return
+  swipeX.value = event.clientX - swipeStart
+}
+
+function endLowStockSwipe() {
+  if (!swipeTracking) return
+  swipeTracking = false
+  if (Math.abs(swipeX.value) > 72) dismissLowStock()
+  else swipeX.value = 0
+}
 const filtersActive = computed(() => categoryFilter.value !== 'all' || stockFilter.value !== 'all')
 const filterSummary = computed(() => {
   const parts: string[] = []
@@ -646,9 +697,114 @@ const saveStock = () =>
 .inv-search {
   display: flex;
   align-items: center;
+  margin-bottom: 18px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 14px;
+}
+
+.low-stock {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 12px 8px 12px 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--ion-color-warning) 28%, var(--surface));
+  color: var(--clinic-ink);
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.low-stock p {
+  flex: 1;
+  margin: 2px 0 0;
+  line-height: 1.45;
+}
+
+.low-stock button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--clinic-ink);
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+
+.inv-list {
+  display: grid;
+  gap: 10px;
+}
+
+.inv-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.inv-card-main {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.inv-card-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.inv-card-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.inv-card-copy h2 {
+  margin: 0;
+  color: var(--clinic-ink);
+  font-size: 1.02rem;
+  font-weight: 680;
+  line-height: 1.3;
+}
+
+.inv-card-copy p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.inv-card-title ion-chip {
+  flex: none;
+  margin: 0;
+}
+
+.inv-card-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.inv-card-actions button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--clinic-blue);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .inv-search ion-searchbar {
@@ -762,9 +918,9 @@ const saveStock = () =>
 }
 
 .inv-thumb {
-  width: 52px;
-  height: 52px;
-  margin-inline-end: 12px;
+  width: 56px;
+  height: 56px;
+  flex: none;
   border-radius: 12px;
   font-size: 1.3rem;
 }

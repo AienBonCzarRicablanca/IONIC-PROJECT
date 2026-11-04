@@ -4,7 +4,7 @@
       <ion-toolbar>
         <ion-buttons slot="start"><ion-menu-button menu="app-menu" aria-label="Open menu" /></ion-buttons>
         <ion-title>Notifications</ion-title>
-        <ion-buttons slot="end"><HeaderTools notifications /></ion-buttons>
+        <ion-buttons slot="end"><HeaderTools /></ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -38,22 +38,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { IonButtons, IonChip, IonContent, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue'
 import HeaderTools from '../../components/common/HeaderTools.vue'
 import { useAuth } from '../../composables/useAuth'
-import { useMyPatient } from '../../composables/useMyPatient'
 import { listMyNotifications, markNotificationRead, type MyNotification } from '../../services/portal.service'
 
 const { session } = useAuth()
 const items = ref<MyNotification[]>([])
+const loading = ref(false)
+const loadError = ref('')
 const savingId = ref<string | null>(null)
 const actionError = ref('')
 const fmt = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 
-const { loading, loadError } = useMyPatient(async () => {
-  items.value = await listMyNotifications(session.value?.user.id ?? '')
-})
+async function load(userId: string) {
+  loading.value = true
+  loadError.value = ''
+  try {
+    items.value = await listMyNotifications(userId)
+  } catch (error) {
+    loadError.value = error instanceof Error ? error.message : 'Could not load notifications.'
+  } finally {
+    loading.value = false
+  }
+}
+
+watch(
+  () => session.value?.user.id,
+  (userId) => {
+    if (userId) void load(userId)
+  },
+  { immediate: true },
+)
 
 async function read(n: MyNotification) {
   if (n.read_at || savingId.value) return

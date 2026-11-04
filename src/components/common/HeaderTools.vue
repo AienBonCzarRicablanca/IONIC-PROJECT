@@ -1,6 +1,6 @@
 <template>
   <ThemeToggle header />
-  <NotificationButton v-if="notifications" />
+  <NotificationButton />
 </template>
 
 <script setup lang="ts">

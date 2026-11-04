@@ -1,6 +1,7 @@
 <template>
   <ion-app>
     <ion-router-outlet />
+    <PearlChat v-if="showPearl" />
     <div v-if="update" class="app-update" role="alertdialog" aria-modal="true" aria-labelledby="update-title">
       <section>
         <p class="app-update-kicker">Harbor Dental</p>
@@ -16,12 +17,20 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { IonApp, IonButton, IonRouterOutlet } from '@ionic/vue'
 import { Capacitor, type PluginListenerHandle } from '@capacitor/core'
 import { App as CapApp } from '@capacitor/app'
+import PearlChat from './components/patient/PearlChat.vue'
+import { useAuth } from './composables/useAuth'
 import { findAppUpdate, installAppUpdate, updateErrorMessage, type AppUpdate } from './services/appUpdate'
 
+const route = useRoute()
+const { role } = useAuth()
+const showPearl = computed(
+  () => role.value === 'patient' && (route.path.startsWith('/patient') || route.path.startsWith('/profile')),
+)
 const update = ref<AppUpdate | null>(null)
 const updating = ref(false)
 const updateMessage = ref('')
