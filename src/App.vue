@@ -17,17 +17,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { IonApp, IonButton, IonRouterOutlet } from '@ionic/vue'
 import { Capacitor, type PluginListenerHandle } from '@capacitor/core'
 import { App as CapApp } from '@capacitor/app'
 import PearlChat from './components/patient/PearlChat.vue'
 import { useAuth } from './composables/useAuth'
 import { findAppUpdate, installAppUpdate, updateErrorMessage, type AppUpdate } from './services/appUpdate'
+import { watchDeviceNotifications } from './services/deviceNotifications'
 
 const route = useRoute()
-const { role } = useAuth()
+const router = useRouter()
+const { role, session } = useAuth()
 const showPearl = computed(
   () => role.value === 'patient' && (route.path.startsWith('/patient') || route.path.startsWith('/profile')),
 )
@@ -36,6 +38,7 @@ const updating = ref(false)
 const updateMessage = ref('')
 
 let appStateHandle: PluginListenerHandle | undefined
+let stopDeviceNotices: (() => void) | undefined
 
 async function refreshUpdate() {
   try {
@@ -44,6 +47,19 @@ async function refreshUpdate() {
     // A dropped connection must not unlock a build that already needs an update.
   }
 }
+
+watch(
+  () => [session.value?.user.id, role.value] as const,
+  ([userId, userRole]) => {
+    stopDeviceNotices?.()
+    stopDeviceNotices = undefined
+    if (!userId) return
+    stopDeviceNotices = watchDeviceNotifications(userId, userRole, (target) => {
+      if (route.path !== target) void router.push(target)
+    })
+  },
+  { immediate: true },
+)
 
 onMounted(() => {
   void refreshUpdate()
@@ -56,6 +72,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  stopDeviceNotices?.()
   void appStateHandle?.remove()
 })
 
