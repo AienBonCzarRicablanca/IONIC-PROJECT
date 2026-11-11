@@ -22,7 +22,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/custom_url_scheme" android:host="open" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="harbordental.vercel.app" android:pathPrefix="/" />
+            </intent-filter>
+
         </activity>
+
+        <meta-data
+            android:name="asset_statements"
+            android:resource="@string/asset_statements" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -5,6 +5,26 @@ const REPO = 'AienBonCzarRicablanca/IONIC-PROJECT'
 
 export const LATEST_APK_URL = `https://github.com/${REPO}/releases/latest/download/harbor-dental.apk`
 
+export const ANDROID_PACKAGE = 'com.harbordental.clinic'
+
+export function harborAppIntentUrl(fallback: string) {
+  const fallbackUrl = encodeURIComponent(fallback)
+  return `intent://open#Intent;scheme=${ANDROID_PACKAGE};package=${ANDROID_PACKAGE};S.browser_fallback_url=${fallbackUrl};end`
+}
+
+export async function isHarborAppInstalled() {
+  const nav = navigator as Navigator & {
+    getInstalledRelatedApps?: () => Promise<Array<{ id?: string; platform?: string }>>
+  }
+  if (typeof nav.getInstalledRelatedApps !== 'function') return false
+  try {
+    const related = await nav.getInstalledRelatedApps()
+    return related.some((app) => (!app.platform || app.platform === 'play') && app.id === ANDROID_PACKAGE)
+  } catch {
+    return false
+  }
+}
+
 interface ApkUpdaterPlugin {
   downloadAndInstall(options: { url: string }): Promise<void>
 }

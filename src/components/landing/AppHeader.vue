@@ -119,7 +119,7 @@ ion-toolbar {
   --padding-end: 0;
 }
 
-:global(html.ion-palette-dark) ion-toolbar {
+html.ion-palette-dark ion-toolbar {
   --background: #102226;
 }
 
@@ -238,11 +238,11 @@ ion-toolbar {
   font-weight: 700;
 }
 
-:global(html.ion-palette-dark) .brand-rule {
+html.ion-palette-dark .brand-rule {
   background: #2c4548;
 }
 
-:global(html.ion-palette-dark) .navigation > a {
+html.ion-palette-dark .navigation > a {
   color: #d7e7e6;
 }
 

@@ -7,6 +7,13 @@
   "display": "standalone",
   "background_color": "#f4fbf9",
   "theme_color": "#0e7c74",
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.harbordental.clinic",
+      "url": "https://github.com/AienBonCzarRicablanca/IONIC-PROJECT/releases/latest/download/harbor-dental.apk"
+    }
+  ],
   "icons": [
     {
       "src": "/logo.png",

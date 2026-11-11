@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.harbordental.clinic",
+      "sha256_cert_fingerprints": [
+        "C3:A9:FE:04:2D:6A:20:3D:20:7C:97:B8:34:10:17:F1:EA:4C:EA:C6:18:84:98:05:C0:34:C8:DE:68:36:0A:63"
+      ]
+    }
+  }
+]

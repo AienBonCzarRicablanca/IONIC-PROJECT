@@ -5,7 +5,8 @@
       {{ message }}
     </p>
     <div>
-      <a v-if="downloadUrl" :href="downloadUrl">Download app</a>
+      <a v-if="kind === 'open'" :href="openUrl">Open the app</a>
+      <a v-else-if="downloadUrl" :href="downloadUrl">Download app</a>
       <button type="button" @click="dismiss">Not now</button>
     </div>
   </aside>
@@ -14,21 +15,27 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { Capacitor } from '@capacitor/core'
-import { LATEST_APK_URL } from '../../services/appUpdate'
+import { harborAppIntentUrl, isHarborAppInstalled, LATEST_APK_URL } from '../../services/appUpdate'
 
 const DISMISS_KEY = 'harbor-install-dismissed'
 const visible = ref(false)
-const kind = ref<'android' | 'ios' | null>(null)
+const kind = ref<'android' | 'ios' | 'open' | null>(null)
 
 const downloadUrl = computed(() => (kind.value === 'android' ? LATEST_APK_URL : ''))
-const title = computed(() => (kind.value === 'android' ? 'Get the Android app.' : 'Add it to your Home Screen.'))
-const message = computed(() =>
-  kind.value === 'android'
-    ? 'This downloads the latest Harbor Dental build. After it is installed, the app still offers updates.'
-    : 'On iPhone, tap Share, then Add to Home Screen. It opens like an app.',
-)
+const openUrl = computed(() => harborAppIntentUrl(window.location.href))
+const title = computed(() => {
+  if (kind.value === 'open') return 'Harbor Dental is already installed.'
+  if (kind.value === 'android') return 'Get the Android app.'
+  return 'Add it to your Home Screen.'
+})
+const message = computed(() => {
+  if (kind.value === 'open') return 'Open the app on this phone instead of staying in the browser?'
+  if (kind.value === 'android')
+    return 'This downloads the latest Harbor Dental build. After it is installed, the app still offers updates.'
+  return 'On iPhone, tap Share, then Add to Home Screen. It opens like an app.'
+})
 
-onMounted(() => {
+onMounted(async () => {
   if (Capacitor.isNativePlatform()) return
   if (sessionStorage.getItem(DISMISS_KEY) === '1') return
   const ua = navigator.userAgent
@@ -36,7 +43,7 @@ onMounted(() => {
     window.matchMedia('(display-mode: standalone)').matches ||
     ('standalone' in navigator && Boolean((navigator as Navigator & { standalone?: boolean }).standalone))
   if (standalone) return
-  if (/Android/i.test(ua)) kind.value = 'android'
+  if (/Android/i.test(ua)) kind.value = (await isHarborAppInstalled()) ? 'open' : 'android'
   else if (/iPhone|iPad|iPod/i.test(ua)) kind.value = 'ios'
   visible.value = kind.value !== null
 })
@@ -106,6 +113,21 @@ function dismiss() {
   padding: 8px 10px;
   color: #14343c;
   background: transparent;
+}
+
+html.ion-palette-dark .install-offer {
+  background: #173034;
+  border-color: #2c4548;
+  box-shadow: none;
+}
+
+html.ion-palette-dark .install-offer p {
+  color: #9eb0b4;
+}
+
+html.ion-palette-dark .install-offer strong,
+html.ion-palette-dark .install-offer button {
+  color: #e7f1f0;
 }
 
 @media (max-width: 640px) {
