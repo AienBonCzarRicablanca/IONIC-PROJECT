@@ -881,6 +881,66 @@ export type Database = {
           },
         ]
       }
+      org_members: {
+        Row: {
+          anchor: string | null
+          bio: string
+          clinic_id: string
+          created_at: string
+          full_name: string
+          id: string
+          parent_id: string | null
+          photo_path: string | null
+          pos_x: number
+          pos_y: number
+          role_title: string
+          updated_at: string
+        }
+        Insert: {
+          anchor?: string | null
+          bio?: string
+          clinic_id: string
+          created_at?: string
+          full_name: string
+          id?: string
+          parent_id?: string | null
+          photo_path?: string | null
+          pos_x?: number
+          pos_y?: number
+          role_title?: string
+          updated_at?: string
+        }
+        Update: {
+          anchor?: string | null
+          bio?: string
+          clinic_id?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          parent_id?: string | null
+          photo_path?: string | null
+          pos_x?: number
+          pos_y?: number
+          role_title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_members_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "org_members_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "org_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patient_files: {
         Row: {
           clinic_id: string

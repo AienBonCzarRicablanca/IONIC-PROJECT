@@ -1,5 +1,7 @@
 <template>
   <section id="home" class="hero-section">
+    <img class="hero-room" src="/assets/images/hero-clinic-bright.jpg" alt="" />
+    <div class="hero-fade" aria-hidden="true"></div>
     <div class="hero-inner">
       <div class="hero-copy">
         <span class="eyebrow"><span class="eyebrow-dot" /> YOUR NEIGHBORHOOD DENTAL STUDIO</span>
@@ -13,421 +15,401 @@
             Book your first visit
             <ion-icon slot="end" :icon="arrowForwardOutline" />
           </ion-button>
-          <a class="text-link" href="#services">
+          <a class="ghost-cta" href="#services">
             Explore our care
             <ion-icon :icon="arrowDownOutline" />
           </a>
         </div>
-        <div class="hero-proof">
-          <div class="avatar-stack" aria-hidden="true">
-            <span>J</span><span>M</span><span>A</span>
-          </div>
-          <p><strong>A little more personal.</strong><br />Care built around you, not the other way around.</p>
-        </div>
       </div>
 
       <div class="hero-visual">
-        <!-- Add your hero image at public/assets/images/hero-dental-clinic.jpg. -->
-        <ImagePlaceholder
+        <svg class="hero-wave" viewBox="0 0 680 620" aria-hidden="true">
+          <path d="M430 -20c90 70 150 40 230 110" fill="none" stroke="#b7efe4" stroke-width="34" stroke-linecap="round" />
+          <path d="M250 430c150 120 310 70 430 -10" fill="none" stroke="#12a394" stroke-width="54" stroke-linecap="round" />
+          <path d="M210 520c170 90 340 40 470 -40" fill="none" stroke="#d9f7f1" stroke-width="42" stroke-linecap="round" />
+        </svg>
+        <img
+          class="hero-portrait"
           src="/assets/images/hero-dental-clinic.jpg"
-          alt="Welcoming, bright dental clinic"
-          label="Add hero-dental-clinic.jpg"
+          alt="Dr. Nicole Primero welcoming patients at Harbor Dental"
         />
-        <div class="hero-image-wash" />
-        <div class="floating-note">
-          <span class="note-icon"><ion-icon :icon="heartOutline" /></span>
-          <span><strong>Here for your smile</strong><small>Gentle care, every visit</small></span>
-        </div>
-        <div class="hero-sticker" aria-label="Care that feels different">
-          <span>care that</span><strong>feels<br />different</strong>
-          <ion-icon :icon="sparklesOutline" />
-        </div>
-        <span class="hero-scribble" aria-hidden="true" />
+        <p class="hero-script">Your Smile, <em>Our Priority</em> <span aria-hidden="true">♥</span></p>
       </div>
     </div>
-    <div class="hero-bottom">
-      <span>SMALL DETAILS. BIG DIFFERENCE.</span>
-      <a href="#about" aria-label="Scroll to learn about us"><ion-icon :icon="arrowDownOutline" /></a>
-      <span>YOUR SMILE IS IN GOOD HANDS</span>
-    </div>
+
+    <ul class="hero-highlights">
+      <li>
+        <span class="hi-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8.2 3.6c1.3-1.5 2.6-1.4 3.5.2.4.7 1 .7 1.4 0 .9-1.6 2.2-1.7 3.5-.2 1.6 1.8 2.6 4.4 1.8 7.2-.6 2.4-1.5 4.6-2.4 6.2-.5.9-1.5.5-1.7-.5-.4-1.7-.8-1.6-1.3.1-.4 1.3-1.5 1.4-2 .3-1.1-2-2.1-4.6-2.6-7.2-.6-2.6.2-5.2 1.8-7.1z" /></svg>
+        </span>
+        <span>
+          <strong>Comprehensive Care</strong>
+          <small>From routine checkups to advanced treatments.</small>
+        </span>
+      </li>
+      <li>
+        <span class="hi-icon" aria-hidden="true"><ion-icon :icon="shieldCheckmarkOutline" /></span>
+        <span>
+          <strong>Trusted Professionals</strong>
+          <small>A skilled, kind team that takes the time.</small>
+        </span>
+      </li>
+      <li>
+        <span class="hi-icon" aria-hidden="true"><ion-icon :icon="heartOutline" /></span>
+        <span>
+          <strong>A Comfortable Experience</strong>
+          <small>A bright clinic and an easy, calm visit.</small>
+        </span>
+      </li>
+      <li>
+        <span class="hi-icon" aria-hidden="true"><ion-icon :icon="calendarOutline" /></span>
+        <span>
+          <strong>Easy Appointment</strong>
+          <small>Book online, at a time that suits you.</small>
+        </span>
+      </li>
+    </ul>
   </section>
 </template>
 
 <script setup lang="ts">
 import { IonButton, IonIcon } from '@ionic/vue'
-import {
-  arrowDownOutline,
-  arrowForwardOutline,
-  heartOutline,
-  sparklesOutline,
-} from 'ionicons/icons'
-import ImagePlaceholder from './ImagePlaceholder.vue'
+import { arrowDownOutline, arrowForwardOutline, calendarOutline, heartOutline, shieldCheckmarkOutline } from 'ionicons/icons'
 </script>
 
 <style scoped>
 .hero-section {
   position: relative;
   overflow: hidden;
-  background: #f5faf9;
+  padding: 28px 0 36px;
+  background: #f4fbf9;
+}
+
+.hero-room {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% center;
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.hero-fade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(420px 280px at 8% 18%, rgb(186 236 224 / 70%), transparent 70%),
+    linear-gradient(90deg, rgb(244 251 249 / 96%) 0%, rgb(244 251 249 / 88%) 34%, rgb(244 251 249 / 28%) 68%, rgb(244 251 249 / 8%));
+  pointer-events: none;
 }
 
 .hero-inner {
+  position: relative;
+  z-index: 1;
   width: min(1160px, calc(100% - 48px));
-  min-height: 590px;
+  min-height: 520px;
   margin: 0 auto;
-  padding: 67px 0 62px;
   display: grid;
-  grid-template-columns: 0.95fr 1.05fr;
+  grid-template-columns: 0.92fr 1.08fr;
   align-items: center;
-  gap: 7%;
+  gap: 4%;
 }
 
 .hero-copy {
   position: relative;
   z-index: 2;
-  padding-bottom: 11px;
 }
 
-.eyebrow,
-.section-kicker {
+.eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: var(--clinic-blue);
-  font-size: 10px;
+  color: #128f86;
+  font-size: 11px;
   font-weight: 800;
-  letter-spacing: 1.35px;
+  letter-spacing: 1.2px;
 }
 
 .eyebrow-dot {
-  width: 7px;
-  height: 7px;
-  background: #47baa9;
+  width: 8px;
+  height: 8px;
+  background: #2ec4b6;
   border-radius: 50%;
-  box-shadow: 0 0 0 4px rgb(71 186 169 / 12%);
+  box-shadow: 0 0 0 5px rgb(46 196 182 / 16%);
 }
 
 h1 {
-  margin: 24px 0 17px;
-  color: var(--clinic-ink);
+  margin: 18px 0 16px;
+  color: #12343c;
   font-family: var(--font-display);
-  font-size: clamp(54px, 6vw, 82px);
+  font-size: clamp(58px, 6.2vw, 86px);
   font-weight: 500;
-  letter-spacing: -4.5px;
-  line-height: 0.99;
+  letter-spacing: -3.5px;
+  line-height: 0.94;
 }
 
 h1 span {
-  color: var(--clinic-blue);
+  color: #128f86;
   font-style: italic;
+  font-weight: 500;
 }
 
 .hero-description {
-  max-width: 430px;
+  max-width: 440px;
   margin: 0;
-  color: #667c83;
-  font-size: 15px;
-  line-height: 1.8;
+  color: #5d757c;
+  font-size: 16px;
+  line-height: 1.7;
 }
 
 .hero-actions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 21px;
-  margin-top: 29px;
+  gap: 14px;
+  margin-top: 28px;
 }
 
 .primary-cta {
-  --border-radius: 13px;
-  --box-shadow: 0 9px 21px rgb(33 126 141 / 20%);
-  height: 51px;
-  font-size: 13px;
+  --background: #0e7c74;
+  --background-hover: #0c6a63;
+  --background-activated: #0c6a63;
+  --color: #fff;
+  --border-radius: 999px;
+  --box-shadow: 0 10px 22px rgb(14 124 116 / 22%);
+  height: 50px;
+  font-size: 14px;
   font-weight: 700;
 }
 
-.text-link {
+.ghost-cta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--clinic-ink);
-  font-size: 12px;
+  height: 50px;
+  padding: 0 18px;
+  color: #14343c;
+  background: #fff;
+  border: 1.5px solid #d5e6e3;
+  border-radius: 999px;
+  font-size: 14px;
   font-weight: 700;
   text-decoration: none;
 }
 
-.text-link ion-icon {
-  color: var(--clinic-blue);
-  font-size: 17px;
-}
-
-.hero-proof {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  margin-top: 41px;
-}
-
-.avatar-stack {
-  display: flex;
-  padding-left: 3px;
-}
-
-.avatar-stack span {
-  width: 31px;
-  height: 31px;
-  margin-left: -4px;
-  display: grid;
-  place-items: center;
-  color: #3f6c73;
-  background: #d9ece8;
-  border: 2px solid #f5faf9;
-  border-radius: 50%;
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.avatar-stack span:nth-child(2) {
-  color: #7d6756;
-  background: #f2e2d2;
-}
-
-.avatar-stack span:nth-child(3) {
-  color: #705b78;
-  background: #e7dcee;
-}
-
-.hero-proof p {
-  margin: 0;
-  color: #7d9096;
-  font-size: 10px;
-  line-height: 1.55;
-}
-
-.hero-proof strong {
-  color: #38545c;
-  font-size: 11px;
+.ghost-cta ion-icon {
+  color: #128f86;
+  font-size: 16px;
 }
 
 .hero-visual {
   position: relative;
-  height: min(470px, 42vw);
-  min-height: 340px;
-  border-radius: 48% 48% 20px 20px;
-  background: #d7ecea;
+  height: min(520px, 46vw);
+  min-height: 380px;
 }
 
-.hero-visual :deep(.image-frame) {
-  border-radius: inherit;
-}
-
-.hero-visual :deep(.image-fallback) {
-  background: linear-gradient(145deg, #deefea, #d8e9ec 56%, #c8e2de);
-}
-
-.hero-image-wash {
+.hero-wave {
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(180deg, transparent 62%, rgb(34 80 88 / 12%));
+  right: -8%;
+  top: -6%;
+  width: 118%;
+  height: 112%;
   pointer-events: none;
 }
 
-.floating-note {
+.hero-portrait {
   position: absolute;
-  right: -24px;
-  bottom: 39px;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 14px 17px;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 12px 34px rgb(42 81 89 / 13%);
+  right: 4%;
+  bottom: 0;
+  width: min(460px, 78%);
+  height: 96%;
+  object-fit: cover;
+  object-position: center 18%;
+  mask-image: radial-gradient(ellipse 72% 78% at 58% 46%, #000 58%, transparent 78%);
 }
 
-.note-icon {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  color: #26889a;
-  background: #e8f5f4;
-  border-radius: 11px;
-  font-size: 17px;
-}
-
-.floating-note > span:last-child {
-  display: grid;
-  gap: 3px;
-}
-
-.floating-note strong {
-  color: var(--clinic-ink);
-  font-size: 11px;
-}
-
-.floating-note small {
-  color: #81939a;
-  font-size: 9px;
-}
-
-.hero-sticker {
+.hero-script {
   position: absolute;
-  top: 29px;
-  right: -31px;
-  width: 102px;
-  height: 102px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  background: #42b5a3;
-  border: 5px solid #f5faf9;
-  border-radius: 50%;
-  text-align: center;
-  transform: rotate(8deg);
-}
-
-.hero-sticker span {
+  right: 2%;
+  bottom: 18%;
+  margin: 0;
+  color: #128f86;
   font-family: var(--font-display);
-  font-size: 9px;
+  font-size: clamp(26px, 2.4vw, 34px);
   font-style: italic;
+  font-weight: 500;
+  line-height: 1.05;
+  transform: rotate(-8deg);
+  text-shadow: 0 8px 18px rgb(255 255 255 / 70%);
 }
 
-.hero-sticker strong {
-  font-family: var(--font-display);
-  font-size: 14px;
-  line-height: 1.03;
+.hero-script span {
+  font-style: normal;
 }
 
-.hero-sticker ion-icon {
-  position: absolute;
-  right: 10px;
-  bottom: 9px;
-  font-size: 13px;
+.hero-highlights {
+  position: relative;
+  z-index: 2;
+  width: min(1080px, calc(100% - 48px));
+  margin: 8px auto 0;
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  list-style: none;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 16px 40px rgb(20 80 86 / 8%);
 }
 
-.hero-scribble {
-  position: absolute;
-  top: 28%;
-  left: -42px;
-  width: 22px;
-  height: 22px;
-  background:
-    linear-gradient(var(--clinic-teal), var(--clinic-teal)) center / 2px 100% no-repeat,
-    linear-gradient(var(--clinic-teal), var(--clinic-teal)) center / 100% 2px no-repeat;
-}
-
-.hero-bottom {
-  min-height: 52px;
+.hero-highlights li {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 24px;
-  color: #799096;
-  background: #edf6f4;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 1.25px;
+  gap: 12px;
+  min-width: 0;
+  padding: 8px 10px;
 }
 
-.hero-bottom a {
-  width: 28px;
-  height: 28px;
+.hero-highlights li + li {
+  border-left: 1px solid #e4f0ee;
+}
+
+.hi-icon {
+  width: 42px;
+  height: 42px;
   display: grid;
+  flex: none;
   place-items: center;
-  color: var(--clinic-blue);
-  background: white;
-  border-radius: 50%;
-  font-size: 15px;
+  color: #128f86;
+  font-size: 22px;
+}
+
+.hi-icon svg {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+}
+
+.hero-highlights strong,
+.hero-highlights small {
+  display: block;
+}
+
+.hero-highlights strong {
+  color: #14343c;
+  font-size: 14px;
+}
+
+.hero-highlights small {
+  margin-top: 2px;
+  color: #6d848b;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+:global(html.ion-palette-dark) .hero-fade {
+  background:
+    radial-gradient(420px 280px at 8% 18%, rgb(20 90 86 / 35%), transparent 70%),
+    linear-gradient(90deg, rgb(16 34 38 / 94%) 0%, rgb(16 34 38 / 82%) 38%, rgb(16 34 38 / 28%) 70%);
+}
+
+:global(html.ion-palette-dark) .hero-room {
+  opacity: 0.22;
+}
+
+:global(html.ion-palette-dark) .ghost-cta {
+  color: #e7f4f2;
+  background: transparent;
+  border-color: #2c4a4e;
+}
+
+:global(html.ion-palette-dark) .hero-highlights {
+  background: #173034;
+  box-shadow: none;
+}
+
+:global(html.ion-palette-dark) .hero-highlights li + li {
+  border-color: #2c4548;
+}
+
+:global(html.ion-palette-dark) .hero-highlights strong {
+  color: #e7f4f2;
+}
+
+@media (max-width: 980px) {
+  .hero-highlights {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero-highlights li:nth-child(3) {
+    border-left: 0;
+  }
 }
 
 @media (max-width: 820px) {
   .hero-inner {
-    width: min(100% - 44px, 620px);
+    width: min(100% - 36px, 640px);
     min-height: 0;
-    padding: 55px 0 54px;
     grid-template-columns: 1fr;
-    gap: 42px;
-  }
-
-  .hero-copy {
-    padding: 0;
+    gap: 12px;
   }
 
   .hero-visual {
-    width: 88%;
-    height: 390px;
+    height: 420px;
     min-height: 0;
-    margin-left: auto;
   }
 
-  .hero-sticker {
-    right: -25px;
+  .hero-portrait {
+    right: 8%;
+    width: min(380px, 86%);
   }
 
-  .floating-note {
-    right: -18px;
+  .hero-highlights {
+    width: min(100% - 28px, 640px);
   }
 }
 
-@media (max-width: 480px) {
-  .hero-inner {
-    width: calc(100% - 38px);
-    padding-top: 42px;
-    gap: 34px;
-  }
-
+@media (max-width: 560px) {
   h1 {
-    margin-top: 20px;
-    font-size: clamp(53px, 16vw, 69px);
-    letter-spacing: -3.4px;
-  }
-
-  .hero-description {
-    font-size: 14px;
+    font-size: clamp(48px, 14vw, 64px);
+    letter-spacing: -2.4px;
   }
 
   .hero-actions {
-    align-items: flex-start;
+    align-items: stretch;
     flex-direction: column;
-    gap: 15px;
-    margin-top: 23px;
   }
 
-  .hero-proof {
-    margin-top: 28px;
+  .ghost-cta,
+  .primary-cta {
+    justify-content: center;
   }
 
   .hero-visual {
-    width: 91%;
-    height: 300px;
+    height: 340px;
   }
 
-  .hero-sticker {
-    top: 17px;
-    right: -20px;
-    width: 83px;
-    height: 83px;
+  .hero-script {
+    right: 4%;
+    bottom: 10%;
+    font-size: 24px;
   }
 
-  .hero-sticker strong {
-    font-size: 12px;
+  .hero-highlights {
+    grid-template-columns: 1fr;
+    padding: 8px 12px;
   }
 
-  .floating-note {
-    right: -13px;
-    bottom: 18px;
-    padding: 10px 12px;
+  .hero-highlights li,
+  .hero-highlights li:nth-child(3) {
+    border-left: 0;
+    border-top: 1px solid #e4f0ee;
   }
 
-  .hero-bottom {
-    gap: 12px;
-    font-size: 7px;
-    letter-spacing: 0.7px;
+  .hero-highlights li:first-child {
+    border-top: 0;
   }
 }
 </style>

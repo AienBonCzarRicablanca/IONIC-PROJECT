@@ -10,8 +10,9 @@
       </div>
       <div class="footer-links">
         <strong>Explore</strong>
-        <a href="#about">Our story</a>
         <a href="#services">Dental services</a>
+        <a href="#about">Our story</a>
+        <a href="#organization">Our team</a>
         <a href="#dentists">Meet the team</a>
       </div>
       <div class="footer-links">

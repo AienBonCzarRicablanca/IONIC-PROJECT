@@ -1,6 +1,7 @@
 <template>
   <ion-app>
     <ion-router-outlet />
+    <InstallOffer />
     <PearlChat v-if="showPearl" />
     <div v-if="update" class="app-update" role="alertdialog" aria-modal="true" aria-labelledby="update-title">
       <section>
@@ -22,6 +23,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { IonApp, IonButton, IonRouterOutlet } from '@ionic/vue'
 import { Capacitor, type PluginListenerHandle } from '@capacitor/core'
 import { App as CapApp } from '@capacitor/app'
+import InstallOffer from './components/common/InstallOffer.vue'
 import PearlChat from './components/patient/PearlChat.vue'
 import { useAuth } from './composables/useAuth'
 import { findAppUpdate, installAppUpdate, updateErrorMessage, type AppUpdate } from './services/appUpdate'

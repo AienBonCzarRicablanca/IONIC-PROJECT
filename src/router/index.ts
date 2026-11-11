@@ -150,6 +150,7 @@ const routes: RouteRecordRaw[] = [
       ['dental-chart', 'PatientChartPage', 'My Dental Chart'],
       ['payments', 'PatientPaymentsPage', 'Payment History'],
       ['braces', 'PatientBracesPage', 'Try On Braces'],
+      ['about', 'PatientAboutPage', 'About the clinic'],
       ['notifications', 'PatientNotificationsPage', 'Notifications'],
     ].map(([path, file, title]) => ({
       path,
@@ -193,6 +194,12 @@ const routes: RouteRecordRaw[] = [
         name: 'superadmin-staff',
         component: () => import('../views/superadmin/StaffPage.vue'),
         meta: { title: 'Staff Management', sprint: 'Sprint 4' },
+      },
+      {
+        path: 'organization',
+        name: 'superadmin-organization',
+        component: () => import('../views/superadmin/OrgChartPage.vue'),
+        meta: { title: 'Organization', sprint: 'Sprint 7' },
       },
       {
         path: 'appointments',

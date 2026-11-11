@@ -2,13 +2,16 @@
   <ion-header class="site-header">
     <ion-toolbar>
       <div class="header-inner">
-        <a class="brand" href="#home" aria-label="Harbor Dental home" @click="closeMenu">
-          <img class="brand-mark" :src="'/logo.png'" alt="" />
-          <span class="brand-copy">
-            <strong>harbor<span> dental</span></strong>
-            <small>CARE THAT FEELS DIFFERENT</small>
-          </span>
-        </a>
+        <div class="brand-lockup">
+          <a class="brand" href="#home" aria-label="Harbor Dental home" @click="closeMenu">
+            <img class="brand-mark" :src="'/logo.png'" alt="" />
+            <span class="brand-copy">
+              <strong>harbor<span> dental</span></strong>
+              <small>CARE THAT FEELS DIFFERENT</small>
+            </span>
+          </a>
+          <span class="brand-rule" aria-hidden="true"></span>
+        </div>
 
         <ion-button
           class="menu-toggle"
@@ -21,11 +24,14 @@
         </ion-button>
 
         <nav class="navigation" :class="{ 'navigation-open': menuOpen }" aria-label="Main navigation">
-          <a href="#home" @click="closeMenu">Home</a>
-          <a href="#about" @click="closeMenu">About us</a>
-          <a href="#services" @click="closeMenu">Services</a>
-          <a href="#dentists" @click="closeMenu">Our dentists</a>
-          <a href="#contact" @click="closeMenu">Contact</a>
+          <a
+            v-for="item in links"
+            :key="item.id"
+            :href="`#${item.id}`"
+            :class="{ 'nav-current': current === item.id }"
+            :aria-current="current === item.id ? 'true' : undefined"
+            @click="pick(item.id)"
+          >{{ item.label }}</a>
           <div class="navigation-actions">
             <ThemeToggle icon-only />
             <ion-button class="header-cta" router-link="/patient/appointments" @click="closeMenu">
@@ -40,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { IonButton, IonHeader, IonIcon, IonToolbar } from '@ionic/vue'
 import ThemeToggle from '../common/ThemeToggle.vue'
 import {
@@ -49,33 +55,90 @@ import {
   menuOutline,
 } from 'ionicons/icons'
 
+const links = [
+  { id: 'home', label: 'Home' },
+  { id: 'services', label: 'Services' },
+  { id: 'about', label: 'About us' },
+  { id: 'organization', label: 'Our team' },
+  { id: 'dentists', label: 'Our dentists' },
+  { id: 'contact', label: 'Contact' },
+]
+
 const menuOpen = ref(false)
+const current = ref('home')
+let content: (HTMLElement & { scrollEvents: boolean }) | null = null
 
 function closeMenu() {
   menuOpen.value = false
 }
+
+function pick(id: string) {
+  current.value = id
+  closeMenu()
+}
+
+function updateCurrent() {
+  const line = 96
+  let active = 'home'
+  for (const item of links) {
+    const section = document.getElementById(item.id)
+    if (!section) continue
+    if (section.getBoundingClientRect().top - line <= 16) active = item.id
+  }
+  current.value = active
+}
+
+function onScroll() {
+  updateCurrent()
+}
+
+onMounted(() => {
+  content = document.querySelector('ion-content.landing-content')
+  if (content) {
+    content.scrollEvents = true
+    content.addEventListener('ionScroll', onScroll)
+  }
+  updateCurrent()
+})
+
+onUnmounted(() => {
+  content?.removeEventListener('ionScroll', onScroll)
+})
 </script>
 
 <style scoped>
 .site-header {
-  box-shadow: 0 1px 0 rgb(18 61 75 / 7%);
+  box-shadow: 0 10px 30px rgb(18 90 96 / 5%);
 }
 
 ion-toolbar {
-  --background: var(--surface);
-  --min-height: 82px;
+  --background: #ffffff;
+  --border-width: 0;
+  --min-height: 78px;
   --padding-start: 0;
   --padding-end: 0;
 }
 
+:global(html.ion-palette-dark) ion-toolbar {
+  --background: #102226;
+}
+
 .header-inner {
-  width: min(1160px, calc(100% - 48px));
-  min-height: 82px;
-  margin: 0 auto;
+  width: 100%;
+  min-height: 78px;
+  padding-inline: max(20px, env(safe-area-inset-left)) max(20px, env(safe-area-inset-right));
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 28px;
+  gap: 20px;
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-shrink: 0;
 }
 
 .brand {
@@ -119,6 +182,13 @@ ion-toolbar {
   letter-spacing: 1.15px;
 }
 
+.brand-rule {
+  width: 1px;
+  height: 34px;
+  flex: none;
+  background: #d7e6e3;
+}
+
 .navigation {
   display: flex;
   align-items: center;
@@ -126,16 +196,28 @@ ion-toolbar {
 }
 
 .navigation > a {
-  color: var(--muted);
-  font-size: 13px;
+  color: #1d3d46;
+  font-size: 14px;
   font-weight: 600;
   text-decoration: none;
   transition: color 160ms ease;
 }
 
+.navigation > a.nav-current {
+  color: #fff;
+  background: #14a094;
+  padding: 8px 16px;
+  border-radius: 999px;
+}
+
 .navigation > a:hover,
 .navigation > a:focus-visible {
   color: var(--clinic-blue);
+}
+
+.navigation > a.nav-current:hover,
+.navigation > a.nav-current:focus-visible {
+  color: #fff;
 }
 
 .navigation-actions {
@@ -145,11 +227,23 @@ ion-toolbar {
 }
 
 .header-cta {
-  --border-radius: 12px;
+  --background: #0e7c74;
+  --background-hover: #0c6a63;
+  --background-activated: #0c6a63;
+  --color: #fff;
+  --border-radius: 999px;
   --box-shadow: none;
-  font-size: 13px;
-  font-weight: 700;
   height: 44px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+:global(html.ion-palette-dark) .brand-rule {
+  background: #2c4548;
+}
+
+:global(html.ion-palette-dark) .navigation > a {
+  color: #d7e7e6;
 }
 
 .menu-toggle {
@@ -164,10 +258,15 @@ ion-toolbar {
   }
 
   .header-inner {
-    width: min(100% - 36px, 650px);
+    width: 100%;
     min-height: 72px;
+    padding-inline: 16px;
     flex-wrap: wrap;
     gap: 0;
+  }
+
+  .brand-rule {
+    display: none;
   }
 
   .menu-toggle {

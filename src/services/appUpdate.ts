@@ -3,6 +3,8 @@ import { App } from '@capacitor/app'
 
 const REPO = 'AienBonCzarRicablanca/IONIC-PROJECT'
 
+export const LATEST_APK_URL = `https://github.com/${REPO}/releases/latest/download/harbor-dental.apk`
+
 interface ApkUpdaterPlugin {
   downloadAndInstall(options: { url: string }): Promise<void>
 }

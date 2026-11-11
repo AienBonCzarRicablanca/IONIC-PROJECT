@@ -33,37 +33,46 @@ function isActive(path: string) {
 
 <style scoped>
 .app-bottom-nav {
-  --background: var(--surface);
+  --background: color-mix(in srgb, var(--surface) 88%, transparent);
   --border: 0;
-  height: calc(62px + env(safe-area-inset-bottom));
+  height: calc(74px + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
-  border-top: 1px solid var(--line);
+  border-top: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
+  backdrop-filter: blur(12px);
 }
 
 ion-tab-button {
   --color: var(--muted);
-  --color-selected: var(--clinic-blue-deep);
+  --color-selected: var(--clinic-blue);
   --padding-top: 6px;
   --padding-bottom: 4px;
   min-width: 0;
-  min-height: 56px;
-}
-
-ion-tab-button.tab-selected {
-  box-shadow: inset 0 3px 0 var(--clinic-teal);
+  min-height: 64px;
 }
 
 ion-icon {
-  font-size: 22px;
+  width: 34px;
+  height: 34px;
+  padding: 6px;
+  border-radius: 999px;
+  font-size: 20px;
+}
+
+ion-tab-button.tab-selected ion-icon {
+  color: #fff;
+  background: #287f91;
 }
 
 ion-label {
+  display: -webkit-box;
   overflow: hidden;
   margin-top: 2px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  white-space: normal;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 </style>

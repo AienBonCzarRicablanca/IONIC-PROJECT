@@ -1,17 +1,30 @@
 .app-shell .layout-main ion-content,
 .app-shell > ion-content {
-  --background: var(--canvas);
+  --background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 80'%3E%3Cpath fill='%23287f91' fill-opacity='.22' d='M32 4c8 0 14 6 16 14 2 8 6 10 8 18 2 10-2 28-8 36-3 4-6 4-8-2-2-8-4-8-8 0-2 6-5 6-8 2-6-8-10-26-8-36 2-8 6-10 8-18C18 10 24 4 32 4z'/%3E%3C/svg%3E") right 6% / 280px no-repeat,
+    linear-gradient(180deg, rgb(244 251 248 / 58%), rgb(231 244 239 / 68%)),
+    radial-gradient(540px 320px at 108% -8%, rgb(127 214 196 / 55%), transparent 70%),
+    radial-gradient(420px 280px at -12% 108%, rgb(40 127 145 / 20%), transparent 68%),
+    url("/assets/images/gallery/reception.jpg") center / cover no-repeat;
   --padding-top: 10px;
   --padding-bottom: 24px;
   --padding-start: max(14px, env(safe-area-inset-left));
   --padding-end: max(14px, env(safe-area-inset-right));
 }
 
+html.ion-palette-dark .app-shell .layout-main ion-content,
+html.ion-palette-dark .app-shell > ion-content {
+  --background:
+    radial-gradient(520px 300px at 100% -10%, rgb(47 157 140 / 24%), transparent 70%),
+    radial-gradient(380px 240px at 0% 100%, rgb(40 127 145 / 18%), transparent 68%),
+    var(--canvas);
+}
+
 .app-shell ion-header ion-toolbar {
-  --background: var(--surface);
+  --background: color-mix(in srgb, var(--surface) 78%, transparent);
   --color: var(--clinic-ink);
   --border-width: 0 0 1px;
-  --border-color: var(--line);
+  --border-color: color-mix(in srgb, var(--line) 70%, transparent);
   --min-height: 62px;
   --padding-start: 6px;
   --padding-end: 8px;
@@ -44,11 +57,12 @@ ion-back-button::part(text) {
 }
 
 .app-shell ion-card {
-  --background: var(--surface);
+  --background: color-mix(in srgb, var(--surface) 82%, transparent);
   margin: 0 0 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid color-mix(in srgb, var(--surface) 70%, var(--line));
+  border-radius: 22px;
+  box-shadow: 0 14px 34px rgb(23 72 80 / 8%);
+  backdrop-filter: blur(10px);
 }
 
 .app-shell ion-card-title {
@@ -146,31 +160,72 @@ ion-back-button::part(text) {
   display: grid;
   gap: 8px;
   align-content: end;
-  min-height: 124px;
+  min-height: 138px;
   padding: 16px 16px 14px;
   overflow: hidden;
   color: var(--clinic-ink);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  background:
+    radial-gradient(90px 90px at 118% 120%, rgb(40 127 145 / 22%), transparent 70%),
+    linear-gradient(165deg, rgb(255 255 255 / 94%), rgb(214 241 236 / 90%));
+  border: 1px solid rgb(255 255 255 / 80%);
+  border-radius: 22px;
+  box-shadow: 0 14px 34px rgb(23 72 80 / 8%);
   text-decoration: none;
 }
 
-.stat ion-icon {
-  color: var(--clinic-blue);
-  font-size: 1.2rem;
-}
-
-.stat::before {
+.stat::after {
   content: "";
   position: absolute;
-  top: 0;
-  right: 16px;
-  left: 16px;
-  height: 3px;
-  background: var(--clinic-teal);
-  border-radius: 0 0 3px 3px;
+  right: -28px;
+  bottom: -36px;
+  width: 108px;
+  height: 108px;
+  border: 14px solid rgb(40 127 145 / 12%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.stat ion-icon {
+  position: relative;
+  z-index: 1;
+  width: 42px;
+  height: 42px;
+  padding: 9px;
+  box-sizing: border-box;
+  color: #0f6d78;
+  background: #b7ebe4;
+  border-radius: 14px;
+  font-size: 1.25rem;
+}
+
+.stat:nth-child(3n + 2) {
+  background:
+    radial-gradient(90px 90px at 118% 120%, rgb(47 157 140 / 24%), transparent 70%),
+    linear-gradient(165deg, rgb(255 255 255 / 94%), rgb(210 236 223 / 92%));
+}
+
+.stat:nth-child(3n + 2)::after {
+  border-color: rgb(47 157 140 / 16%);
+}
+
+.stat:nth-child(3n + 2) ion-icon {
+  color: #1f8a62;
+  background: #b7ebcf;
+}
+
+.stat:nth-child(3n) {
+  background:
+    radial-gradient(90px 90px at 118% 120%, rgb(232 154 92 / 28%), transparent 70%),
+    linear-gradient(165deg, rgb(255 255 255 / 94%), rgb(255 228 208 / 92%));
+}
+
+.stat:nth-child(3n)::after {
+  border-color: rgb(232 154 92 / 20%);
+}
+
+.stat:nth-child(3n) ion-icon {
+  color: #b86a2d;
+  background: #ffd7b8;
 }
 
 .stat span:last-child {
@@ -180,6 +235,12 @@ ion-back-button::part(text) {
   line-height: 1.35;
 }
 
+.stat-value,
+.stat span:last-child {
+  position: relative;
+  z-index: 1;
+}
+
 .stat-value {
   font-family: var(--font-display);
   font-size: clamp(1.35rem, 2.2vw, 1.9rem);
@@ -187,6 +248,13 @@ ion-back-button::part(text) {
   letter-spacing: -0.045em;
   line-height: 1;
   overflow-wrap: anywhere;
+}
+
+html.ion-palette-dark .stat,
+html.ion-palette-dark .stat:nth-child(3n + 2),
+html.ion-palette-dark .stat:nth-child(3n) {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border-color: var(--line);
 }
 
 .stat:focus-visible {
@@ -270,10 +338,11 @@ ion-modal {
   gap: 16px;
   margin: 2px 0 16px;
   padding: 18px 18px 16px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--clinic-blue) 18%, var(--surface)), var(--surface) 62%);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  border: 1px solid color-mix(in srgb, var(--surface) 72%, var(--line));
+  border-radius: 22px;
+  box-shadow: 0 14px 34px rgb(23 72 80 / 8%);
+  backdrop-filter: blur(10px);
 }
 
 .dash-hero h2 {
@@ -324,10 +393,11 @@ a.dash-fact:focus-visible {
 
 .dash-panel {
   padding: 16px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  border: 1px solid color-mix(in srgb, var(--surface) 72%, var(--line));
+  border-radius: 22px;
+  box-shadow: 0 14px 34px rgb(23 72 80 / 8%);
+  backdrop-filter: blur(10px);
 }
 
 .dash-panel h3 {
@@ -399,8 +469,12 @@ a.dash-fact:focus-visible {
   padding: 14px;
   color: inherit;
   text-decoration: none;
-  background: var(--accent-soft);
-  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--clinic-blue) 14%, var(--surface));
+  border-radius: 18px;
+}
+
+.dash-fact:nth-child(2) {
+  background: color-mix(in srgb, var(--clinic-teal) 16%, var(--surface));
 }
 
 .dash-fact span {

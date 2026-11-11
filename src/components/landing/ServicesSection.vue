@@ -1,8 +1,12 @@
 <template>
   <section id="services" class="section services-section">
     <div class="section-heading">
-      <span class="section-kicker">A LITTLE SOMETHING FOR EVERY SMILE</span>
-      <h2>Care for all the<br /><em>reasons you smile.</em></h2>
+      <div class="services-mark" aria-hidden="true">
+        <span></span>
+        <svg viewBox="0 0 24 24"><path d="M8.2 3.6c1.3-1.5 2.6-1.4 3.5.2.4.7 1 .7 1.4 0 .9-1.6 2.2-1.7 3.5-.2 1.6 1.8 2.6 4.4 1.8 7.2-.6 2.4-1.5 4.6-2.4 6.2-.5.9-1.5.5-1.7-.5-.4-1.7-.8-1.6-1.3.1-.4 1.3-1.5 1.4-2 .3-1.1-2-2.1-4.6-2.6-7.2-.6-2.6.2-5.2 1.8-7.1z" /></svg>
+        <span></span>
+      </div>
+      <h2>Our Services</h2>
       <p>From a regular check-up to a little extra confidence, we make every visit feel easy.</p>
     </div>
 
@@ -54,7 +58,27 @@ const services = CLINIC_SERVICES
 }
 
 .services-section {
-  background: #fff;
+  background: #f7fcfb;
+}
+
+.services-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: #128f86;
+}
+
+.services-mark span {
+  width: 72px;
+  height: 1px;
+  background: #cfe5e1;
+}
+
+.services-mark svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
 }
 
 .section-heading {

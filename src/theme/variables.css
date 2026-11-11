@@ -8,14 +8,14 @@
   --clinic-blue-deep: #1c5966;
   --clinic-ink: #17343d;
   --clinic-teal: #2f9d8c;
-  --canvas: #f3f6f5;
+  --canvas: #e7f4ef;
   --surface: #ffffff;
-  --sidebar: #f7faf9;
-  --line: #dce7e5;
-  --line-strong: #c5d6d2;
+  --sidebar: #f3fbf8;
+  --line: #d3e8e3;
+  --line-strong: #b7d4cc;
   --muted: #5f757c;
-  --accent-soft: #e5f3f1;
-  --skeleton: #e4eeec;
+  --accent-soft: #dff5f1;
+  --skeleton: #d7eee8;
   --shadow-sm: 0 1px 2px rgb(23 52 61 / 5%);
   --shadow-md: 0 10px 30px rgb(23 52 61 / 8%);
 
@@ -35,7 +35,7 @@
   --ion-font-family: var(--font-sans);
 
   --ion-background-color: var(--canvas);
-  --ion-background-color-rgb: 243, 246, 245;
+  --ion-background-color-rgb: 231, 244, 239;
   --ion-text-color: var(--clinic-ink);
   --ion-text-color-rgb: 23, 52, 61;
   --ion-toolbar-background: var(--surface);

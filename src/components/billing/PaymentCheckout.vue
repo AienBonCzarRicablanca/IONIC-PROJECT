@@ -26,14 +26,10 @@
           />
 
           <template v-if="method === 'gcash'">
-            <ion-input
+            <PhContactInput
               v-model="mobile"
               label="GCash mobile number"
-              label-placement="stacked"
-              fill="outline"
-              type="tel"
               placeholder="09XXXXXXXXX"
-              inputmode="tel"
             />
           </template>
 
@@ -91,6 +87,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import PhContactInput from '../common/PhContactInput.vue'
 import {
   IonButton,
   IonButtons,

@@ -29,8 +29,47 @@
             <span><strong>Our vision</strong><small>A community that feels good about showing off its smiles.</small></span>
           </div>
         </div>
-        <a href="#contact" class="about-link">Get to know us <ion-icon :icon="arrowForwardOutline" /></a>
+        <a href="#organization" class="about-link">Meet the team <ion-icon :icon="arrowForwardOutline" /></a>
       </div>
+    </div>
+
+    <div class="about-story">
+      <article>
+        <span class="section-kicker">THE PRACTICE</span>
+        <h3>A neighborhood clinic with a careful pace.</h3>
+        <p>
+          Harbor Dental is on J.P. Rizal Street in Calapan City. The rooms are set up for
+          unhurried visits: a clear explanation first, then treatment you have agreed to.
+          Families, students, and long-time patients share the same front desk.
+        </p>
+      </article>
+      <article>
+        <span class="section-kicker">A VISIT</span>
+        <h3>You always know what happens next.</h3>
+        <p>
+          Book from the portal or call (043) 000-1400. The team confirms the chair, meets you
+          by name, and reviews your chart before you sit down. Fees are explained before
+          treatment, and your records stay with the clinic.
+        </p>
+      </article>
+      <article>
+        <span class="section-kicker">HOURS</span>
+        <h3>Monday to Saturday, 8:00 to 5:00.</h3>
+        <p>
+          The clinic is closed on Sundays. If you are in pain, call during open hours and the
+          front desk will look for the earliest safe chair. Trouble breathing or swelling of
+          the face needs urgent care, not a message in the app.
+        </p>
+      </article>
+    </div>
+
+    <div id="organization" class="about-org">
+      <div class="section-heading">
+        <span class="section-kicker">THE PEOPLE</span>
+        <h2>Who keeps the<br /><em>clinic running.</em></h2>
+        <p>Hover or tap a portrait. The note opens beside that person.</p>
+      </div>
+      <OrgChart />
     </div>
   </section>
 </template>
@@ -39,6 +78,7 @@
 import { IonIcon } from '@ionic/vue'
 import { arrowForwardOutline, heartOutline, sunnyOutline } from 'ionicons/icons'
 import ImagePlaceholder from './ImagePlaceholder.vue'
+import OrgChart from './OrgChart.vue'
 </script>
 
 <style scoped>
@@ -205,15 +245,71 @@ h2 em {
   font-size: 15px;
 }
 
+.about-story {
+  width: min(1080px, calc(100% - 48px));
+  margin: 64px auto 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.about-story article {
+  padding: 22px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.about-story h3 {
+  margin: 10px 0 8px;
+  color: var(--clinic-ink);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.about-story p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.about-org {
+  width: min(1160px, calc(100% - 48px));
+  margin: 72px auto 0;
+}
+
+.section-heading h2 {
+  margin: 12px 0;
+}
+
+.section-heading p {
+  max-width: 520px;
+  margin: 0 0 22px;
+  color: #71868c;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
 @media (max-width: 760px) {
   .about-section {
     padding: 68px 0;
   }
 
+  .about-inner,
+  .about-story,
+  .about-org {
+    width: min(100% - 42px, 720px);
+  }
+
   .about-inner {
-    width: min(100% - 42px, 590px);
     grid-template-columns: 1fr;
     gap: 38px;
+  }
+
+  .about-story {
+    grid-template-columns: 1fr;
   }
 
   .about-visual {

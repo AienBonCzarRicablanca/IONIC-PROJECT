@@ -55,6 +55,8 @@
       />
       <span v-if="errors.confirm" class="auth-field-error">{{ errors.confirm }}</span>
 
+      <TermsAgreement v-model="agreed" :error="errors.terms" />
+
       <ion-button class="auth-submit" type="submit" expand="block" :disabled="loading">
         <ion-spinner v-if="loading" name="crescent" />
         <span v-else>Create account</span>
@@ -68,10 +70,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { IonButton, IonIcon, IonInput, IonInputPasswordToggle, IonSpinner } from '@ionic/vue'
 import { alertCircleOutline, checkmarkCircleOutline } from 'ionicons/icons'
 import AuthShell from './AuthShell.vue'
+import TermsAgreement from './TermsAgreement.vue'
 import { useAuth } from '../../composables/useAuth'
 import { validateEmail, validatePassword, validateRequired } from '../../utils/validation'
 
@@ -81,9 +84,14 @@ const fullName = ref('')
 const email = ref('')
 const password = ref('')
 const confirm = ref('')
+const agreed = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
-const errors = reactive({ fullName: '', email: '', password: '', confirm: '' })
+const errors = reactive({ fullName: '', email: '', password: '', confirm: '', terms: '' })
+
+watch(agreed, (value) => {
+  if (value) errors.terms = ''
+})
 
 async function submit() {
   errorMessage.value = ''
@@ -91,6 +99,7 @@ async function submit() {
   errors.email = validateEmail(email.value)
   errors.password = validatePassword(password.value)
   errors.confirm = password.value === confirm.value ? '' : 'Passwords do not match.'
+  errors.terms = agreed.value ? '' : 'Please agree to the Terms and Conditions.'
   if (Object.values(errors).some(Boolean)) return
 
   try {

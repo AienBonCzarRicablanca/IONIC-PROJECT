@@ -182,7 +182,6 @@ function isActive(path: string) {
 .sidebar-list ion-item.sidebar-active {
   --background: var(--accent-soft);
   --color: var(--clinic-blue-deep);
-  box-shadow: inset 3px 0 0 var(--clinic-teal);
 }
 
 .sidebar-list ion-item.sidebar-active ion-icon {

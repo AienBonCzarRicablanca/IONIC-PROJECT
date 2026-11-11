@@ -92,15 +92,7 @@
                 :maxlength="160"
                 autocomplete="name"
               />
-              <ion-input
-                v-model="contactNumber"
-                label="Contact number"
-                label-placement="stacked"
-                fill="outline"
-                :maxlength="40"
-                type="tel"
-                autocomplete="tel"
-              />
+              <PhContactInput v-model="contactNumber" label="Contact number" />
             </div>
           </ion-card-content>
         </ion-card>
@@ -189,14 +181,7 @@
                 fill="outline"
                 :maxlength="160"
               />
-              <ion-input
-                v-model="emergencyNumber"
-                label="Emergency contact number"
-                label-placement="stacked"
-                fill="outline"
-                type="tel"
-                :maxlength="40"
-              />
+              <PhContactInput v-model="emergencyNumber" label="Emergency contact number" />
             </div>
           </ion-card-content>
         </ion-card>
@@ -324,6 +309,7 @@ import {
 } from '@ionic/vue'
 import { chevronForwardOutline, createOutline, imageOutline, keyOutline } from 'ionicons/icons'
 import HeaderTools from '../components/common/HeaderTools.vue'
+import PhContactInput from '../components/common/PhContactInput.vue'
 import { useAuth } from '../composables/useAuth'
 import {
   AVATAR_TYPES,

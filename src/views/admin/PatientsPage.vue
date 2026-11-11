@@ -194,14 +194,7 @@
               <ion-select-option value="male">Male</ion-select-option>
               <ion-select-option value="other">Other</ion-select-option>
             </ion-select>
-            <ion-input
-              v-model="form.contact_number"
-              label="Contact number"
-              label-placement="stacked"
-              fill="outline"
-              type="tel"
-              autocomplete="tel"
-            />
+            <PhContactInput v-model="form.contact_number" label="Contact number" />
             <ion-input
               v-model="form.email"
               label="Email"
@@ -226,13 +219,7 @@
                 label-placement="stacked"
                 fill="outline"
               />
-              <ion-input
-                v-model="form.emergency_contact_number"
-                label="Emergency contact number"
-                label-placement="stacked"
-                fill="outline"
-                type="tel"
-              />
+              <PhContactInput v-model="form.emergency_contact_number" label="Emergency contact number" />
             </div>
             <ion-textarea
               v-model="form.medical_history"
@@ -302,6 +289,7 @@ import {
 import { personAddOutline } from 'ionicons/icons'
 import PageAction from '../../components/common/PageAction.vue'
 import HeaderTools from '../../components/common/HeaderTools.vue'
+import PhContactInput from '../../components/common/PhContactInput.vue'
 import UserAvatar from '../../components/common/UserAvatar.vue'
 import { useAuth } from '../../composables/useAuth'
 import { useAvatarPaths } from '../../composables/useAvatarPaths'

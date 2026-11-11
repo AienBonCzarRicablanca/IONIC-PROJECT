@@ -37,6 +37,8 @@
       </ion-input>
       <span v-if="errors.password" class="auth-field-error">{{ errors.password }}</span>
 
+      <TermsAgreement v-model="agreed" :error="errors.terms" />
+
       <ion-button class="auth-submit" type="submit" expand="block" :disabled="loading">
         <ion-spinner v-if="loading" name="crescent" />
         <span v-else>Sign in</span>
@@ -53,11 +55,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { IonButton, IonIcon, IonInput, IonInputPasswordToggle, IonSpinner } from '@ionic/vue'
 import { alertCircleOutline, checkmarkCircleOutline } from 'ionicons/icons'
 import AuthShell from './AuthShell.vue'
+import TermsAgreement from './TermsAgreement.vue'
 import { useAuth } from '../../composables/useAuth'
 import { validateEmail, validateRequired } from '../../utils/validation'
 
@@ -67,8 +70,13 @@ const { login, loading, homeFor } = useAuth()
 
 const email = ref('')
 const password = ref('')
+const agreed = ref(false)
 const errorMessage = ref('')
-const errors = reactive({ email: '', password: '' })
+const errors = reactive({ email: '', password: '', terms: '' })
+
+watch(agreed, (value) => {
+  if (value) errors.terms = ''
+})
 
 const notice = computed(() =>
   route.query.reset === '1' ? 'Password updated. Please sign in with your new password.' : '',
@@ -78,7 +86,8 @@ async function submit() {
   errorMessage.value = ''
   errors.email = validateEmail(email.value)
   errors.password = validateRequired(password.value, 'Password')
-  if (errors.email || errors.password) return
+  errors.terms = agreed.value ? '' : 'Please agree to the Terms and Conditions.'
+  if (errors.email || errors.password || errors.terms) return
 
   try {
     const profile = await login(email.value.trim(), password.value)
