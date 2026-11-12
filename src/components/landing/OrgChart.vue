@@ -6,7 +6,7 @@
       {{ editable && saved ? 'Add the first person to start the chart.' : 'The clinic team chart has not been published yet.' }}
     </p>
     <div v-else class="org-layout" :class="{ 'org-layout-edit': editable && saved }">
-      <div class="org-scroll">
+      <div class="org-stage">
         <button
           type="button"
           class="org-fit"
@@ -20,6 +20,7 @@
             <path d="M6 6l12 12M18 6L6 18" />
           </svg>
         </button>
+        <div class="org-scroll">
         <div
           ref="board"
           class="org-board"
@@ -69,6 +70,7 @@
               </div>
             </div>
           </article>
+        </div>
         </div>
       </div>
 
@@ -488,15 +490,24 @@ function replace(updated: OrgMember) {
   overflow: hidden;
 }
 
+.org-stage {
+  position: relative;
+  min-width: 0;
+}
+
+.org-chart-full .org-stage,
 .org-chart-full .org-scroll {
   min-height: 100dvh;
+}
+
+.org-chart-full .org-scroll {
   border: 0;
   border-radius: 0;
 }
 
 .org-fit {
   position: absolute;
-  z-index: 4;
+  z-index: 8;
   top: 12px;
   right: 12px;
   width: 36px;
