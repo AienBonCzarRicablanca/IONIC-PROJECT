@@ -1,11 +1,25 @@
 <template>
-  <div class="org-chart">
+  <teleport to="body" :disabled="!expanded">
+  <div class="org-chart" :class="{ 'org-chart-full': expanded }">
     <div v-if="loading" class="org-status">Loading the clinic team...</div>
     <p v-else-if="!members.length" class="org-status">
       {{ editable && saved ? 'Add the first person to start the chart.' : 'The clinic team chart has not been published yet.' }}
     </p>
     <div v-else class="org-layout" :class="{ 'org-layout-edit': editable && saved }">
       <div class="org-scroll">
+        <button
+          type="button"
+          class="org-fit"
+          :aria-label="expanded ? 'Close full screen' : 'Full screen'"
+          @click="expanded = !expanded"
+        >
+          <svg v-if="!expanded" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+          </svg>
+          <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
         <div
           ref="board"
           class="org-board"
@@ -114,6 +128,7 @@
     </p>
     <p v-if="pageError" class="org-error" role="alert">{{ pageError }}</p>
   </div>
+  </teleport>
 </template>
 
 <script setup lang="ts">
@@ -147,6 +162,7 @@ const draftRole = ref('')
 const draftBio = ref('')
 const draftParent = ref('')
 const board = ref<HTMLElement | null>(null)
+const expanded = ref(false)
 const boardSize = reactive({ width: 1000, height: 820 })
 const boardHeight = 820
 
@@ -177,11 +193,25 @@ watch(selected, (member) => {
   draftParent.value = member?.parentId ?? ''
 })
 
+function onKey(event: KeyboardEvent) {
+  if (event.key === 'Escape') expanded.value = false
+}
+
 onMounted(() => {
   void load()
   window.addEventListener('resize', measure)
+  window.addEventListener('keydown', onKey)
 })
-onUnmounted(() => window.removeEventListener('resize', measure))
+onUnmounted(() => {
+  window.removeEventListener('resize', measure)
+  window.removeEventListener('keydown', onKey)
+  document.body.style.overflow = ''
+})
+
+watch(expanded, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+  if (open) nextTick(measure)
+})
 
 async function load() {
   loading.value = true
@@ -448,6 +478,53 @@ function replace(updated: OrgMember) {
   gap: 14px;
 }
 
+.org-chart-full {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  gap: 0;
+  padding: 0;
+  background: var(--canvas);
+  overflow: hidden;
+}
+
+.org-chart-full .org-scroll {
+  min-height: 100dvh;
+  border: 0;
+  border-radius: 0;
+}
+
+.org-fit {
+  position: absolute;
+  z-index: 4;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  color: #f4fbf9;
+  background: rgb(6 16 26 / 72%);
+  cursor: pointer;
+}
+
+.org-chart-full .org-fit {
+  top: calc(12px + env(safe-area-inset-top));
+  right: calc(12px + env(safe-area-inset-right));
+}
+
+.org-fit svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
 .org-status,
 .org-hint {
   margin: 0;
@@ -467,6 +544,7 @@ function replace(updated: OrgMember) {
 }
 
 .org-scroll {
+  position: relative;
   overflow-x: auto;
   border: 1px solid var(--line);
   border-radius: 18px;

@@ -92,7 +92,9 @@ async function submit() {
   try {
     const profile = await login(email.value.trim(), password.value)
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : ''
-    const target = redirect.startsWith(`/${profile.role}/`) ? redirect : homeFor(profile.role)
+    const target = profile.role === 'patient'
+      ? homeFor(profile.role)
+      : redirect.startsWith(`/${profile.role}/`) ? redirect : homeFor(profile.role)
     await router.replace(target)
   } catch (err) {
     errorMessage.value = err instanceof Error ? err.message : 'Unable to sign in.'

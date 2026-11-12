@@ -119,8 +119,8 @@ html.ion-palette-dark.md {
   --clinic-blue-deep: #d5eef2;
   --clinic-ink: #e7f1f0;
   --clinic-teal: #5ec8b6;
-  --canvas: #10181b;
-  --surface: #1a2529;
+  --canvas: #071018;
+  --surface: #102028;
   --sidebar: #152023;
   --line: #2c3d42;
   --line-strong: #3d545b;
@@ -131,7 +131,7 @@ html.ion-palette-dark.md {
   --shadow-md: 0 12px 32px rgb(0 0 0 / 36%);
 
   --ion-background-color: var(--canvas);
-  --ion-background-color-rgb: 16, 24, 27;
+  --ion-background-color-rgb: 7, 16, 24;
   --ion-text-color: var(--clinic-ink);
   --ion-text-color-rgb: 231, 241, 240;
   --ion-toolbar-background: var(--surface);

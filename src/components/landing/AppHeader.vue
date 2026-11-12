@@ -77,13 +77,19 @@ function pick(id: string) {
   closeMenu()
 }
 
+function sectionTop(id: string) {
+  return document.getElementById(id)?.getBoundingClientRect().top ?? null
+}
+
 function updateCurrent() {
-  const line = 96
+  const homeTop = sectionTop('home')
+  const contactTop = sectionTop('contact')
+  if (homeTop == null || contactTop == null || contactTop - homeTop < 160) return
+  const line = 110
   let active = 'home'
   for (const item of links) {
-    const section = document.getElementById(item.id)
-    if (!section) continue
-    if (section.getBoundingClientRect().top - line <= 16) active = item.id
+    const top = sectionTop(item.id)
+    if (top != null && top <= line) active = item.id
   }
   current.value = active
 }
@@ -93,16 +99,22 @@ function onScroll() {
 }
 
 onMounted(() => {
+  current.value = 'home'
   content = document.querySelector('ion-content.landing-content')
   if (content) {
     content.scrollEvents = true
     content.addEventListener('ionScroll', onScroll)
+    content.shadowRoot?.querySelector('.inner-scroll')?.addEventListener('scroll', onScroll, { passive: true })
   }
-  updateCurrent()
+  window.addEventListener('resize', onScroll)
+  requestAnimationFrame(() => requestAnimationFrame(updateCurrent))
+  window.setTimeout(updateCurrent, 400)
 })
 
 onUnmounted(() => {
   content?.removeEventListener('ionScroll', onScroll)
+  content?.shadowRoot?.querySelector('.inner-scroll')?.removeEventListener('scroll', onScroll)
+  window.removeEventListener('resize', onScroll)
 })
 </script>
 
@@ -120,7 +132,7 @@ ion-toolbar {
 }
 
 html.ion-palette-dark ion-toolbar {
-  --background: #102226;
+  --background: #071018;
 }
 
 .header-inner {

@@ -17,6 +17,16 @@
           @refresh="reload"
         />
 
+        <router-link class="clinic-card" to="/patient/about">
+          <div class="clinic-card-copy">
+            <p>Harbor Dental</p>
+            <h3>About the clinic</h3>
+            <p>J.P. Rizal Street in Calapan City. Hours, a visit, and the people who keep the clinic running.</p>
+            <span>See the clinic</span>
+          </div>
+          <img class="clinic-card-photo" src="/assets/images/about-clinic.jpg" alt="Harbor Dental clinic on J.P. Rizal Street" />
+        </router-link>
+
         <div v-if="loadError" class="state-message error-message" role="alert">{{ loadError }}</div>
         <div v-else-if="loading && !patient" class="state-message" role="status">
           <div class="load-bars" aria-hidden="true">
@@ -135,4 +145,86 @@ const { patient, loading, loadError, reload } = useMyPatient(async (person) => {
 <style scoped>
 .state-message { padding: 1.25rem 1rem; text-align: center; }
 .error-message { color: var(--ion-color-danger); }
+
+.clinic-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(168px, 280px);
+  align-items: stretch;
+  gap: 16px;
+  margin: 0 0 14px;
+  padding: 12px;
+  color: inherit;
+  text-decoration: none;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--clinic-blue) 28%, var(--line));
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.clinic-card-photo {
+  width: 100%;
+  height: 100%;
+  min-height: 148px;
+  object-fit: cover;
+  object-position: center 42%;
+  border-radius: 16px;
+}
+
+.clinic-card-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 8px 4px 8px 8px;
+}
+
+.clinic-card-copy p:first-child {
+  margin: 0;
+  color: var(--clinic-blue);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.clinic-card h3 {
+  margin: 4px 0 6px;
+  color: var(--clinic-ink);
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.clinic-card-copy p:last-of-type {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.clinic-card span {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--clinic-teal);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 560px) {
+  .clinic-card {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .clinic-card-photo {
+    height: 168px;
+    order: -1;
+  }
+
+  .clinic-card-copy {
+    padding: 2px 6px 6px;
+  }
+}
 </style>
