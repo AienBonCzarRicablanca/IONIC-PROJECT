@@ -38,8 +38,8 @@ export const NAV_ITEMS: Record<UserRole, NavItem[]> = {
   ],
   patient: [
     { label: 'Dashboard', path: '/patient/dashboard', icon: gridOutline },
-    { label: 'Appointments', path: '/patient/appointments', icon: calendarOutline },
     { label: 'Treatments', path: '/patient/treatments', icon: medkitOutline },
+    { label: 'Appointments', path: '/patient/appointments', icon: calendarOutline },
     { label: 'Dental Chart', path: '/patient/dental-chart', icon: bodyOutline },
     { label: 'Payments', path: '/patient/payments', icon: cardOutline },
     { label: 'Try Braces', path: '/patient/braces', icon: happyOutline },

@@ -10,11 +10,16 @@
     <ion-content>
       <div class="page">
         <header class="intro">
-          <h2>Care we offer</h2>
-          <p>The same treatments you see on the website. Open one to read what a visit is like.</p>
+          <h2>Treatments</h2>
+          <p>Browse the care we offer, or open your visits and the notes your dentist has shared.</p>
         </header>
 
-        <div class="catalog">
+        <ion-segment v-model="section" class="section-tabs" aria-label="Treatments">
+          <ion-segment-button value="care"><ion-label>Available treatments</ion-label></ion-segment-button>
+          <ion-segment-button value="history"><ion-label>History</ion-label></ion-segment-button>
+        </ion-segment>
+
+        <div v-if="section === 'care'" class="catalog">
           <button
             v-for="service in CLINIC_SERVICES"
             :key="service.title"
@@ -34,10 +39,10 @@
           </button>
         </div>
 
-        <section class="history" aria-labelledby="history-heading">
+        <section v-else class="history" aria-labelledby="history-heading">
           <div class="history-head">
             <h2 id="history-heading">Your history</h2>
-            <p>Visits, plans, and notes your dentist has shared with you.</p>
+            <p>Booked visits appear here, along with plans and notes your dentist has shared.</p>
           </div>
 
           <div v-if="loadError" class="empty error-message" role="alert">{{ loadError }}</div>
@@ -50,7 +55,13 @@
             </ion-segment>
 
             <div v-if="historyTab === 'visits'" class="history-list">
-              <p v-if="!records.length" class="empty">No treatment records yet.</p>
+              <p v-if="!appointments.length && !records.length" class="empty">No visits yet. A booking shows up here as soon as you request it.</p>
+              <article v-for="visit in appointments" :key="visit.id" class="record">
+                <p class="record-date">{{ visitFmt.format(new Date(visit.starts_at)) }}</p>
+                <h3>{{ visit.services?.name || 'Appointment' }}</h3>
+                <p><strong>Status.</strong> {{ visit.status.replaceAll('_', ' ') }}</p>
+                <p v-if="visit.reason"><strong>Reason.</strong> {{ visit.reason }}</p>
+              </article>
               <article v-for="record in records" :key="record.id" class="record">
                 <p class="record-date">{{ fmt.format(new Date(record.recorded_at)) }}</p>
                 <h3>{{ record.diagnosis }}</h3>
@@ -105,8 +116,8 @@
             <ul>
               <li v-for="step in selected.expect" :key="step">{{ step }}</li>
             </ul>
-            <ion-button expand="block" router-link="/patient/appointments" @click="selected = null">
-              Book a visit
+            <ion-button expand="block" @click="bookSelected">
+              Book {{ selected.title }}
             </ion-button>
           </div>
         </ion-content>
@@ -117,6 +128,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonLabel, IonMenuButton, IonModal,
   IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar,
@@ -126,23 +138,37 @@ import HeaderTools from '../../components/common/HeaderTools.vue'
 import { CLINIC_SERVICES, type ClinicService } from '../../content/clinicServices'
 import { useMyPatient } from '../../composables/useMyPatient'
 import * as clinical from '../../services/clinical.service'
+import * as portal from '../../services/portal.service'
 
 const records = ref<clinical.DentalRecord[]>([])
 const plans = ref<clinical.TreatmentPlan[]>([])
 const notes = ref<clinical.ClinicalNote[]>([])
+const appointments = ref<portal.MyAppointment[]>([])
+const section = ref<'care' | 'history'>('care')
 const historyTab = ref<'visits' | 'plans' | 'notes'>('visits')
 const selected = ref<ClinicService | null>(null)
+const router = useRouter()
 const fmt = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' })
+const visitFmt = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+
+function bookSelected() {
+  const title = selected.value?.title
+  selected.value = null
+  if (!title) return
+  void router.push({ path: '/patient/appointments', query: { service: title } })
+}
 
 const { patient, loading, loadError } = useMyPatient(async (p) => {
-  const [recordRows, planRows, noteRows] = await Promise.all([
+  const [recordRows, planRows, noteRows, visitRows] = await Promise.all([
     clinical.listRecords(p.id),
     clinical.listPlans(p.id),
     clinical.listNotes(p.id),
+    portal.listMyAppointments(p.id),
   ])
   records.value = recordRows
   plans.value = planRows
   notes.value = noteRows.filter((note) => note.is_shared_with_patient)
+  appointments.value = visitRows
 })
 </script>
 
@@ -157,6 +183,7 @@ const { patient, loading, loadError } = useMyPatient(async (p) => {
 }
 .intro h2 { font-size: 1.7rem; }
 .intro p, .history-head p { margin: 6px 0 0; color: var(--muted); }
+.section-tabs { margin-top: 16px; }
 .catalog {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -203,7 +230,7 @@ const { patient, loading, loadError } = useMyPatient(async (p) => {
 .service-copy span { color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
 .service-copy em { color: var(--clinic-blue); font-style: normal; font-size: 0.78rem; font-weight: 750; }
 .history {
-  margin-top: 28px;
+  margin-top: 16px;
   padding: 18px 16px 8px;
   background: var(--surface);
   border: 1px solid var(--line);

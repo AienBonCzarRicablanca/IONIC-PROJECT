@@ -12,52 +12,101 @@
         <div v-if="loadError" class="state-message error-message" role="alert">{{ loadError }}</div>
 
         <template v-if="patient && !loadError">
-          <ion-card>
-            <ion-card-header><ion-card-title>Request an appointment</ion-card-title></ion-card-header>
-            <ion-card-content>
-              <ion-select v-model="serviceId" label="Service" label-placement="stacked" placeholder="Choose a service" interface="popover">
-                <ion-select-option v-for="s in services" :key="s.id" :value="s.id">
-                  {{ s.name }} ({{ s.duration_minutes }} min)
-                </ion-select-option>
-              </ion-select>
-              <ion-select v-model="dentistId" label="Dentist" label-placement="stacked" placeholder="Choose a dentist" interface="popover">
-                <ion-select-option v-for="d in dentists" :key="d.id" :value="d.id">
-                  {{ d.full_name }}<template v-if="d.specialization"> – {{ d.specialization }}</template>
-                </ion-select-option>
-              </ion-select>
-              <div class="date-field">
-                <label for="appt-date">Date</label>
-                <input id="appt-date" v-model="date" type="date" :min="minDate" />
-              </div>
-              <ion-select v-model="slot" label="Available time" label-placement="stacked"
-                :placeholder="slotPlaceholder"
-                :disabled="!slots.length" interface="popover">
-                <ion-select-option v-for="s in slots" :key="s" :value="s">{{ timeLabel(s) }}</ion-select-option>
-              </ion-select>
-              <ion-textarea v-model="reason" label="Reason (optional)" label-placement="stacked" :maxlength="300" />
-              <ion-button :disabled="busy || !canSubmit" @click="submit">Request appointment</ion-button>
-              <p class="hint">Requests start as pending until the clinic confirms them.</p>
-            </ion-card-content>
-          </ion-card>
+          <header class="intro">
+            <p>Harbor Dental</p>
+            <h2>Book a visit</h2>
+            <p>Choose the care, the dentist, and a free time. You can change any of these before you send the request.</p>
+          </header>
 
-          <ion-card>
-            <ion-card-header><ion-card-title>My appointments</ion-card-title></ion-card-header>
-            <ion-card-content>
+          <ion-segment v-model="section" class="section-tabs" aria-label="Appointments">
+            <ion-segment-button value="book"><ion-label>Book a visit</ion-label></ion-segment-button>
+            <ion-segment-button value="mine"><ion-label>My appointments</ion-label></ion-segment-button>
+          </ion-segment>
+
+          <section v-if="section === 'book'" class="panel" aria-labelledby="request-heading">
+              <h3 id="request-heading">Request an appointment</h3>
+              <ol class="steps">
+                <li>
+                  <span>Service</span>
+                  <ion-select class="slot-source" v-model="serviceId" label="Service" label-placement="stacked" placeholder="Choose a service" interface="popover">
+                    <ion-select-option v-for="s in services" :key="s.id" :value="s.id">
+                      {{ s.name }} ({{ s.duration_minutes }} min)
+                    </ion-select-option>
+                  </ion-select>
+                  <div class="choices" role="listbox" aria-label="Service">
+                    <button
+                      v-for="s in services"
+                      :key="s.id"
+                      type="button"
+                      role="option"
+                      :aria-selected="serviceId === s.id"
+                      :class="{ selected: serviceId === s.id }"
+                      @click="serviceId = s.id"
+                    >
+                      <strong>{{ s.name }}</strong>
+                      <span>{{ s.duration_minutes }} min</span>
+                    </button>
+                  </div>
+                  <p v-if="!services.length" class="field-note">No services are available yet.</p>
+                  <p v-else-if="selectedService" class="field-note">Selected for this visit. You can choose a different one.</p>
+                </li>
+                <li>
+                  <span>Dentist</span>
+                  <ion-select v-model="dentistId" label="Dentist" label-placement="stacked" placeholder="Choose a dentist" interface="popover" fill="outline">
+                    <ion-select-option v-for="d in dentists" :key="d.id" :value="d.id">
+                      {{ d.full_name }}<template v-if="d.specialization"> – {{ d.specialization }}</template>
+                    </ion-select-option>
+                  </ion-select>
+                </li>
+                <li>
+                  <span>Date and time</span>
+                  <div class="date-field">
+                    <label for="appt-date">Date</label>
+                    <input id="appt-date" v-model="date" type="date" :min="minDate" />
+                  </div>
+                  <ion-select class="slot-source" v-model="slot" label="Available time" label-placement="stacked"
+                    :placeholder="slotPlaceholder"
+                    :disabled="!slots.length" interface="popover">
+                    <ion-select-option v-for="s in slots" :key="s" :value="s">{{ timeLabel(s) }}</ion-select-option>
+                  </ion-select>
+                  <p v-if="!slots.length" class="field-note">{{ slotPlaceholder }}</p>
+                  <div v-else class="times" role="listbox" aria-label="Available time">
+                    <button
+                      v-for="s in slots"
+                      :key="s"
+                      type="button"
+                      role="option"
+                      :aria-selected="slot === s"
+                      :class="{ selected: slot === s }"
+                      @click="slot = s"
+                    >{{ timeLabel(s) }}</button>
+                  </div>
+                </li>
+                <li>
+                  <span>Note</span>
+                  <ion-textarea v-model="reason" label="Reason (optional)" label-placement="stacked" :maxlength="300" fill="outline" />
+                </li>
+              </ol>
+              <ion-button expand="block" :disabled="busy || !canSubmit" @click="submit">Request appointment</ion-button>
+              <p class="hint">Requests start as pending until the clinic confirms them. You will get a notice when the status changes.</p>
+          </section>
+
+          <section v-else class="panel" aria-labelledby="mine-heading">
+              <h3 id="mine-heading">My appointments</h3>
               <p v-if="!appointments.length" class="state-message">No appointments yet.</p>
-              <ion-list v-else lines="full">
-                <ion-item v-for="a in appointments" :key="a.id" :detail="false">
-                  <ion-label class="ion-text-wrap">
-                    <h3>{{ fmt.format(new Date(a.starts_at)) }}</h3>
-                    <p>{{ a.services?.name }}<span v-if="a.reason"> · {{ a.reason }}</span></p>
-                  </ion-label>
+              <ul v-else class="visit-list">
+                <li v-for="a in appointments" :key="a.id">
+                  <div>
+                    <strong>{{ a.services?.name || 'Appointment' }}</strong>
+                    <span>{{ fmt.format(new Date(a.starts_at)) }}</span>
+                    <em v-if="a.reason">{{ a.reason }}</em>
+                  </div>
                   <ion-chip :color="STATUS_COLOR[a.status] ?? 'medium'">{{ a.status.replace('_', ' ') }}</ion-chip>
-                  <ion-button v-if="cancellable(a)" slot="end" size="small" fill="outline" color="danger"
-                    :disabled="busy" @click="cancel(a)">Cancel</ion-button>
-                </ion-item>
-              </ion-list>
+                  <ion-button v-if="cancellable(a)" size="small" fill="outline" color="danger" :disabled="busy" @click="cancel(a)">Cancel</ion-button>
+                </li>
+              </ul>
               <p class="hint">Online cancellation is available up to 24 hours before the appointment. To reschedule, cancel and book a new time, or call the clinic.</p>
-            </ion-card-content>
-          </ion-card>
+          </section>
         </template>
       </div>
       <ion-toast :is-open="toastOpen" :message="toastMessage" :duration="3000" @did-dismiss="toastOpen = false" />
@@ -67,10 +116,10 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import {
-  IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonChip, IonContent,
-  IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonPage, IonSelect, IonSelectOption,
-  IonTextarea, IonTitle, IonToast, IonToolbar,
+  IonButton, IonButtons, IonChip, IonContent, IonHeader, IonLabel, IonMenuButton, IonPage,
+  IonSegment, IonSegmentButton, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToast, IonToolbar,
 } from '@ionic/vue'
 import HeaderTools from '../../components/common/HeaderTools.vue'
 import { useMyPatient } from '../../composables/useMyPatient'
@@ -83,6 +132,8 @@ const STATUS_COLOR: Record<string, string> = {
   pending: 'warning', confirmed: 'primary', completed: 'success', cancelled: 'medium', no_show: 'danger',
 }
 
+const route = useRoute()
+const section = ref<'book' | 'mine'>('book')
 const services = ref<portal.PortalService[]>([])
 const dentists = ref<portal.PortalDentist[]>([])
 const appointments = ref<portal.MyAppointment[]>([])
@@ -187,6 +238,16 @@ async function refreshBusy() {
 }
 watch([dentistId, date], () => void refreshBusy(), { flush: 'sync' })
 
+function applyRequestedService() {
+  const wanted = typeof route.query.service === 'string' ? route.query.service.trim().toLowerCase() : ''
+  if (!wanted) return
+  const match = services.value.find((service) => service.name.trim().toLowerCase() === wanted)
+  if (match) serviceId.value = match.id
+}
+
+watch(services, applyRequestedService)
+watch(() => route.query.service, applyRequestedService)
+
 const { patient, loadError, reload } = useMyPatient(async (p) => {
   const [svc, den, appts] = await Promise.all([
     portal.listServices(p.clinic_id),
@@ -196,6 +257,7 @@ const { patient, loadError, reload } = useMyPatient(async (p) => {
   services.value = svc
   dentists.value = den
   appointments.value = appts
+  applyRequestedService()
 })
 
 async function submit() {
@@ -206,6 +268,7 @@ async function submit() {
       dentistId: dentistId.value, service: selectedService.value, start: new Date(slot.value), reason: reason.value,
     })
     showToast('Request sent. The clinic will confirm it soon.')
+    section.value = 'mine'
     reason.value = ''
     await reload()
     await refreshBusy()
@@ -233,9 +296,120 @@ async function cancel(a: portal.MyAppointment) {
 </script>
 
 <style scoped>
-.page { margin: 0 auto; max-width: 800px; padding: 0.5rem; }
-.date-field { display: grid; gap: 0.25rem; margin: 0.75rem 0; }
-.hint { color: var(--ion-color-medium); font-size: 0.85rem; }
-.state-message { padding: 1rem; text-align: center; }
+.page { margin: 0 auto; max-width: 980px; padding: 8px 2px 28px; }
+.intro p:first-child {
+  margin: 0;
+  color: var(--clinic-blue);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.intro h2 {
+  margin: 4px 0 6px;
+  color: var(--clinic-ink);
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+.intro p:last-child { margin: 0; max-width: 62ch; color: var(--muted); line-height: 1.5; }
+.section-tabs { margin-top: 16px; }
+.panel {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.panel h3 {
+  margin: 0 0 12px;
+  color: var(--clinic-ink);
+  font-size: 1.05rem;
+}
+.steps { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 12px; }
+.steps li { position: relative; display: grid; gap: 6px; }
+.steps li > span {
+  color: var(--clinic-blue);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.field-note, .hint { margin: 0; color: var(--muted); font-size: 0.85rem; line-height: 1.45; }
+.hint { margin-top: 10px; }
+.date-field { display: grid; gap: 6px; }
+.slot-source {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.choices button {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  text-align: left;
+  color: var(--clinic-ink);
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font: inherit;
+  cursor: pointer;
+}
+.choices button span { color: var(--muted); font-size: 0.78rem; }
+.choices button.selected {
+  color: var(--clinic-ink);
+  background: var(--accent-soft);
+  border-color: var(--clinic-blue);
+  box-shadow: inset 0 0 0 1px var(--clinic-blue);
+}
+.times { display: flex; flex-wrap: wrap; gap: 8px; }
+.times button {
+  min-width: 92px;
+  padding: 10px 12px;
+  color: var(--clinic-ink);
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.times button.selected {
+  color: #fff;
+  background: var(--clinic-blue);
+  border-color: var(--clinic-blue);
+}
+.date-field input {
+  height: 44px;
+  padding: 0 12px;
+  color: var(--clinic-ink);
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font: inherit;
+}
+.visit-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.visit-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 10px;
+  align-items: center;
+  padding: 12px;
+  background: var(--canvas);
+  border-radius: var(--radius-md);
+}
+.visit-list strong, .visit-list span, .visit-list em { display: block; }
+.visit-list strong { color: var(--clinic-ink); }
+.visit-list span, .visit-list em { color: var(--muted); font-size: 0.84rem; font-style: normal; }
+.visit-list ion-button { grid-column: 1 / -1; justify-self: start; margin: 0; }
+.state-message { padding: 1rem 0; text-align: center; color: var(--muted); }
 .error-message { color: var(--ion-color-danger); }
+@media (max-width: 800px) {
+  .choices { grid-template-columns: 1fr; }
+}
 </style>
